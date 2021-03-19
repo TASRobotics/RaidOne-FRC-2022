@@ -191,15 +191,15 @@ public class Drive extends Submodule {
      * @param leaderInversion whether the profiling leader is inverted
      */
     private void configureMotorClosedLoop(InvertType leaderInversion) {
-        TalonFXConfiguration leaderConfig = new TalonFXConfiguration();
-        TalonFXConfiguration followerConfig = new TalonFXConfiguration();
+        TalonSRXConfiguration leaderConfig = new TalonSRXConfiguration();
+        TalonSRXConfiguration followerConfig = new TalonSRXConfiguration();
 
         // Use the integrated encoder on the falcons as feedback
         followerConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
 
         // Configure the follower encoder as a remote sensor for the leader
         leaderConfig.remoteFilter0.remoteSensorDeviceID = profilingFollower.getDeviceID();
-        leaderConfig.remoteFilter0.remoteSensorSource = RemoteSensorSource.TalonFX_SelectedSensor;
+        leaderConfig.remoteFilter0.remoteSensorSource = RemoteSensorSource.TalonSRX_SelectedSensor;
 
         // Configure robot distance math
         setRobotDistanceConfigs(leaderInversion, leaderConfig);
@@ -271,7 +271,7 @@ public class Drive extends Submodule {
      * @param masterConfig     Configuration object to fill
      */
     private void setRobotDistanceConfigs(InvertType masterInvertType,
-            TalonFXConfiguration masterConfig) {
+            TalonSRXConfiguration masterConfig) {
         if (masterInvertType == InvertType.InvertMotorOutput) {
             masterConfig.diff0Term = FeedbackDevice.IntegratedSensor; // Local Integrated Sensor
             masterConfig.diff1Term = FeedbackDevice.RemoteSensor0; // Aux Selected Sensor

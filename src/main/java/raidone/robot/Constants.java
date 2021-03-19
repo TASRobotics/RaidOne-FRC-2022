@@ -97,7 +97,8 @@ public class Constants {
         public static final int RIGHT_MOTOR_ID = 21;
 
         public static final NeutralMode NEUTRAL_MODE = NeutralMode.Coast;
-        public static final InvertType INVERSION = InvertType.None;
+        public static final InvertType LEFT_INVERSION = InvertType.InvertMotorOutput;
+        public static final InvertType RIGHT_INVERSION = InvertType.None;
 
         public static final double MAX_SPEED = 20000; // in ticks per 100ms
         public static final double FAKE_MAX_SPEED = 17000; // in ticks per 100ms
@@ -130,10 +131,12 @@ public class Constants {
      * Throat Constants
      */
     public static final class ThroatConstants {
-        public static final int MOTOR_ID = 31;
+        public static final int LEFT_MOTOR_ID = 22;
+        public static final int RIGHT_MOTOR_ID = 21;
 
         public static final NeutralMode NEUTRAL_MODE = NeutralMode.Brake;
-        public static final InvertType INVERSION = InvertType.InvertMotorOutput;
+        public static final InvertType LEFT_INVERSION = InvertType.InvertMotorOutput;
+        public static final InvertType RIGHT_INVERSION = InvertType.None;
 
         public static final int THROAT_FORWARD_ID = 4;
         public static final int THROAT_REVERSE_ID = 5;

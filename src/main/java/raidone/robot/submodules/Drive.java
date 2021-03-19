@@ -316,11 +316,11 @@ public class Drive extends Submodule {
         gearShiftEntry.setString(currentGearShift.toString());
         leftEncoderEntry.setNumber(
             EncoderUtils.ticksToInches(
-                leftLeader.getSensorCollection().getIntegratedSensorPosition(), currentGearShift)
+                leftLeader.getSelectedSensorPosition(), currentGearShift)
         );
         rightEncoderEntry.setNumber(
             EncoderUtils.ticksToInches(
-                -rightLeader.getSensorCollection().getIntegratedSensorPosition(), currentGearShift)
+                -rightLeader.getSelectedSensorPosition(), currentGearShift)
         );
     }
 
@@ -365,8 +365,8 @@ public class Drive extends Submodule {
          * setSelectedSensorPosition would set the sensor sum for the PID, which is
          * not what we want to do.
          */
-        leftLeader.getSensorCollection().setIntegratedSensorPosition(0.0, Constants.TIMEOUT_MS);
-        rightLeader.getSensorCollection().setIntegratedSensorPosition(0.0, Constants.TIMEOUT_MS);
+        leftLeader.setSelectedSensorPosition(0.0, 0, Constants.TIMEOUT_MS);
+        rightLeader.setSelectedSensorPosition(0.0, 0, Constants.TIMEOUT_MS);
         pigeon.setYaw(0.0);
     }
 

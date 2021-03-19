@@ -1,4 +1,4 @@
-package raidzero.pathgen;
+package raidone.pathgen;
 
 import java.util.function.DoubleUnaryOperator;
 import org.apache.commons.math3.analysis.interpolation.HermiteInterpolator;

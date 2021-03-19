@@ -1,12 +1,14 @@
 # RaidOne-FRC-2021
-Work in progress...
+Ovrall structure complete
 
 TODO:
 
-Drive- Gearshift IDS, gear ratios, wheel diam, pigeon?
+Limelight Config
 
-Shooter- MaxSpeed
+Add TBH on flywheel
 
-Import Pathgen
+Kicker module
 
-Confirm # of Intake motors
+Servo module
+
+Tune Constants

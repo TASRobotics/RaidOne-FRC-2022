@@ -12,7 +12,7 @@ import raidone.robot.auto.actions.DebugLimelightDistance;
 import raidone.robot.dashboard.Tab;
 import raidone.robot.submodules.Drive;
 import raidone.robot.submodules.Intake;
-import raidone.robot.submodules.Shooter;
+import raidone.robot.submodules.Flywheel;
 import raidone.robot.submodules.Throat;
 import raidone.robot.submodules.Drive.GearShift;
 import raidone.robot.utils.JoystickUtils;

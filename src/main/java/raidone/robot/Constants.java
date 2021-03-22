@@ -93,8 +93,8 @@ public class Constants {
      * Shooter Constants
      */
     public static final class ShooterConstants {
-        public static final int LEFT_MOTOR_ID = 22;
-        public static final int RIGHT_MOTOR_ID = 21;
+        public static final int LEFT_MOTOR_ID = 42;
+        public static final int RIGHT_MOTOR_ID = 41;
 
         public static final NeutralMode NEUTRAL_MODE = NeutralMode.Coast;
         public static final InvertType LEFT_INVERSION = InvertType.InvertMotorOutput;

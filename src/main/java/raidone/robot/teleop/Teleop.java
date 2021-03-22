@@ -163,8 +163,11 @@ public class Teleop {
             } else if (controller.getYButtonReleased()) {
                 shooter.shoot(0.0, false);
             }
-            return;
 
+
+            shooter.shoot((JoystickUtils.deadband(controller.getTriggerAxis(Hand.kRight))), false);
+
+            return;
         }
 
         //

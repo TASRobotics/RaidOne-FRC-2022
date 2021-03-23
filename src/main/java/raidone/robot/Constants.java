@@ -63,7 +63,7 @@ public class Constants {
         public static final int PRIMARY_INT_ZONE = 100;
 
         public static final double AUX_F = 0;
-        public static final double AUX_P = 8;
+        public static final double AUX_P = 2; //8
         public static final double AUX_I = 0;
         public static final double AUX_D = 0.6;//4.0;
         public static final int AUX_INT_ZONE = 20;
@@ -82,8 +82,8 @@ public class Constants {
         public static final double DEFAULT_TARGET_ACCELERATION = 8;
 
         // Joystick to Output mapping
-        public static final double JOYSTICK_EXPONENT = 1;
-        public static final double JOYSTICK_COEFFICIENT = 1;
+        public static final double JOYSTICK_EXPONENT = 1.2;
+        public static final double JOYSTICK_COEFFICIENT = 0.8;
 
         public static final double QUICK_STOP_THRESHOLD = 0.2;
         public static final double QUICK_STOP_ALPHA = 0.1;

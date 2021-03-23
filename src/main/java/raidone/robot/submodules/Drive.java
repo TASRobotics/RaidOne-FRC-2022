@@ -124,6 +124,8 @@ public class Drive extends Submodule {
         rightFollowerB = new LazyVictorSPX(DriveConstants.RIGHT_FOLLOWERB_ID);
         configureMotor(rightFollowerB, DriveConstants.RIGHT_INVERSION);
         rightFollowerB.follow(rightLeader);
+        leftLeader.configOpenloopRamp(0.079);
+        rightLeader.configOpenloopRamp(0.079);
 
         // Pigeon IMU
         pigeon = new PigeonIMU(DriveConstants.PIGEON_ID);
@@ -487,10 +489,18 @@ public class Drive extends Submodule {
     public void setBrakeMode(boolean brake) {
         if (brake) {
             rightLeader.setNeutralMode(NeutralMode.Brake);
+            rightFollowerA.setNeutralMode(NeutralMode.Brake);
+            rightFollowerB.setNeutralMode(NeutralMode.Brake);
             leftLeader.setNeutralMode(NeutralMode.Brake);
+            leftFollowerA.setNeutralMode(NeutralMode.Brake);
+            leftFollowerB.setNeutralMode(NeutralMode.Brake);
         } else {
             rightLeader.setNeutralMode(NeutralMode.Coast);
+            rightFollowerA.setNeutralMode(NeutralMode.Coast);
+            rightFollowerB.setNeutralMode(NeutralMode.Coast);
             leftLeader.setNeutralMode(NeutralMode.Coast);
+            leftFollowerA.setNeutralMode(NeutralMode.Coast);
+            leftFollowerB.setNeutralMode(NeutralMode.Coast);
         }
     }
 

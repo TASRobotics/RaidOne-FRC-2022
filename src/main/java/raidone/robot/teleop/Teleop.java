@@ -71,6 +71,7 @@ public class Teleop {
     public void onStart() {
         drive.stop();
         drive.setGearShift(GearShift.LOW);
+        drive.setBrakeMode(true);
 
         debugDistance.start();
     }

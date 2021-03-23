@@ -45,9 +45,10 @@ public class Constants {
         public static final InvertType LEFT_INVERSION = InvertType.None;
         public static final InvertType RIGHT_INVERSION = InvertType.InvertMotorOutput;
 
-        public static final double HIGH_GEAR_RATIO = 9.98;
-        public static final double LOW_GEAR_RATIO = 18.43;
-    
+        public static final double HIGH_GEAR_RATIO = 1;
+        public static final double LOW_GEAR_RATIO = 1;
+        // 12-20 20-36 36-30
+        
         public static final double WHEEL_DIAMETER_INCHES = 6.0;
 
         // Closed-loop constants
@@ -56,21 +57,21 @@ public class Constants {
         public static final int PID_AUX_SLOT = 1;
         public static final double PIGEON_SCALE = 3600.0 / 8192.0;
 
-        public static final double PRIMARY_F = 0.8 * 1023.0 / 20348;
+        public static final double PRIMARY_F = 1 * 1023.0 / 5000;
         public static final double PRIMARY_P = 0.03; // 1023 / (30 * 2000)
         public static final double PRIMARY_I = 0;
         public static final double PRIMARY_D = 0;
         public static final int PRIMARY_INT_ZONE = 100;
 
         public static final double AUX_F = 0;
-        public static final double AUX_P = 2; //8
+        public static final double AUX_P = 0.8;
         public static final double AUX_I = 0;
         public static final double AUX_D = 0.6;//4.0;
         public static final int AUX_INT_ZONE = 20;
         public static final boolean AUX_POLARITY = false;
 
         public static final int BASE_TRAJ_PERIOD_MS = 0;
-        public static final int SENSOR_UNITS_PER_ROTATION = 2048;
+        public static final int SENSOR_UNITS_PER_ROTATION = 4096;
         public static final double SENSOR_UNITS_PER_INCH_LOW_GEAR = 
             SENSOR_UNITS_PER_ROTATION * LOW_GEAR_RATIO / (WHEEL_DIAMETER_INCHES * Math.PI);
         public static final double SENSOR_UNITS_PER_INCH_HIGH_GEAR = 
@@ -78,12 +79,12 @@ public class Constants {
         public static final int MIN_POINTS_IN_TALON = 10;
         public static final int TRANSMIT_PERIOD_MS = 3;
 
-        public static final double DEFAULT_CRUISE_VELOCITY = 8;
-        public static final double DEFAULT_TARGET_ACCELERATION = 8;
+        public static final double DEFAULT_CRUISE_VELOCITY = 1;
+        public static final double DEFAULT_TARGET_ACCELERATION = 5;
 
         // Joystick to Output mapping
-        public static final double JOYSTICK_EXPONENT = 1.2;
-        public static final double JOYSTICK_COEFFICIENT = 0.8;
+        public static final double JOYSTICK_EXPONENT = 1;
+        public static final double JOYSTICK_COEFFICIENT = 1;
 
         public static final double QUICK_STOP_THRESHOLD = 0.2;
         public static final double QUICK_STOP_ALPHA = 0.1;

@@ -105,6 +105,7 @@ public class Drive extends Submodule {
         // Motors
         leftLeader = new LazyTalonSRX(DriveConstants.LEFT_LEADER_ID);
         configureMotor(leftLeader, DriveConstants.LEFT_INVERSION);
+        leftLeader.setSensorPhase(true);
 
         leftFollowerA = new LazyVictorSPX(DriveConstants.LEFT_FOLLOWERA_ID);
         configureMotor(leftFollowerA, DriveConstants.LEFT_INVERSION);
@@ -116,6 +117,7 @@ public class Drive extends Submodule {
 
         rightLeader = new LazyTalonSRX(DriveConstants.RIGHT_LEADER_ID);
         configureMotor(rightLeader, DriveConstants.RIGHT_INVERSION);
+        rightLeader.setSensorPhase(false);
 
         rightFollowerA = new LazyVictorSPX(DriveConstants.RIGHT_FOLLOWERA_ID);
         configureMotor(rightFollowerA, DriveConstants.RIGHT_INVERSION);
@@ -274,15 +276,9 @@ public class Drive extends Submodule {
      */
     private void setRobotDistanceConfigs(InvertType masterInvertType,
             TalonSRXConfiguration masterConfig) {
-        if (masterInvertType == InvertType.InvertMotorOutput) {
-            masterConfig.diff0Term = FeedbackDevice.IntegratedSensor; // Local Integrated Sensor
-            masterConfig.diff1Term = FeedbackDevice.RemoteSensor0; // Aux Selected Sensor
-            masterConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.SensorDifference;
-        } else {
-            masterConfig.sum0Term = FeedbackDevice.RemoteSensor0; // Aux Selected Sensor
-            masterConfig.sum1Term = FeedbackDevice.IntegratedSensor; // Local IntegratedSensor
-            masterConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.SensorSum;
-        }
+        masterConfig.sum0Term = FeedbackDevice.RemoteSensor0; // Aux Selected Sensor
+        masterConfig.sum1Term = FeedbackDevice.IntegratedSensor; // Local IntegratedSensor
+        masterConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.SensorSum;
         masterConfig.primaryPID.selectedFeedbackCoefficient = 0.5;
     }
 

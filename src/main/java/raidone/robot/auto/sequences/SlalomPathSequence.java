@@ -14,9 +14,9 @@ import raidone.robot.submodules.Shooter;
 public class SlalomPathSequence extends AutoSequence {
 
     // private static final Point[] FRONT_CURVE_WAYPOINTS = {
-    //     new Point(90, -75, 0),
-    //     new Point(215, -75, 0),
-    //     new Point(310, 0, -45)
+    //     new Point(-60, 90, 0),
+    //     new Point(-60, 210, 0),
+    //     new Point(0, 270, 0)
     // };
     private static final Point[] FRONT_CURVE_WAYPOINTS = {
         new Point(30,30,0)
@@ -24,11 +24,18 @@ public class SlalomPathSequence extends AutoSequence {
     private static final Path FRONT_CURVE_PATH = new Path(FRONT_CURVE_WAYPOINTS, false,
         7.5, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
+    // private static final Point[] MIDDLE_CURVE_WAYPOINTS = {
+    //     new Point(-30, 320, -90),
+    //     new Point(-60, 270, -180),
+    // };
+    // private static final Path MIDDLE_CURVE_PATH = new Path(MIDDLE_CURVE_WAYPOINTS, true,
+    //     7.5, DriveConstants.DEFAULT_TARGET_ACCELERATION);
+
+
     // private static final Point[] BACK_CURVE_WAYPOINTS = {
-    //     new Point(310, -70, -180),
-    //     new Point(215, 0, -180),
-    //     new Point(90, 0, -180),
-    //     new Point(0, -70, -180)
+    //     new Point(0, 210, -180),
+    //     new Point(0, 90, -180),
+    //     new Point(-60, 0, -180)
     // };
     private static final Point[] BACK_CURVE_WAYPOINTS = {
         new Point(0,0,0)
@@ -39,7 +46,7 @@ public class SlalomPathSequence extends AutoSequence {
 
     public SlalomPathSequence() {
         System.out.println(DriverStation.getInstance().getAlliance().name());
-    }
+    }               
 
     @Override
     public void sequence() {
@@ -50,6 +57,11 @@ public class SlalomPathSequence extends AutoSequence {
                         new DrivePath(FRONT_CURVE_PATH)
                     )
                 ),
+                // new ParallelAction(
+                //     Arrays.asList(
+                //         new DrivePath(MIDDLE_CURVE_PATH)
+                //     )
+                // ),
                 new ParallelAction(
                     Arrays.asList(
                         new DrivePath(BACK_CURVE_PATH)

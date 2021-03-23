@@ -13,22 +13,27 @@ import raidone.robot.submodules.Shooter;
 
 public class SlalomPathSequence extends AutoSequence {
 
+    // private static final Point[] FRONT_CURVE_WAYPOINTS = {
+    //     new Point(90, -75, 0),
+    //     new Point(215, -75, 0),
+    //     new Point(310, 0, -45)
+    // };
     private static final Point[] FRONT_CURVE_WAYPOINTS = {
-        new Point(90, -75, 0),
-        new Point(215, -75, 0),
-        new Point(310, 0, -45)
+        new Point(30,30,0)
     };
     private static final Path FRONT_CURVE_PATH = new Path(FRONT_CURVE_WAYPOINTS, false,
         7.5, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
+    // private static final Point[] BACK_CURVE_WAYPOINTS = {
+    //     new Point(310, -70, -180),
+    //     new Point(215, 0, -180),
+    //     new Point(90, 0, -180),
+    //     new Point(0, -70, -180)
+    // };
     private static final Point[] BACK_CURVE_WAYPOINTS = {
-        new Point(310, -70, -180),
-        new Point(215, 0, -180),
-        new Point(90, 0, -180),
-        new Point(0, -70, -180)
+        new Point(0,0,0)
     };
-    
-    private static final Path BACK_CURVE_PATH = new Path(BACK_CURVE_WAYPOINTS, false,
+    private static final Path BACK_CURVE_PATH = new Path(BACK_CURVE_WAYPOINTS, true,
         7.5, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
 

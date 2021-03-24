@@ -126,8 +126,8 @@ public class Drive extends Submodule {
         rightFollowerB = new LazyVictorSPX(DriveConstants.RIGHT_FOLLOWERB_ID);
         configureMotor(rightFollowerB, DriveConstants.RIGHT_INVERSION);
         rightFollowerB.follow(rightLeader);
-        leftLeader.configOpenloopRamp(0.079);
-        rightLeader.configOpenloopRamp(0.079);
+        leftLeader.configOpenloopRamp(0.1);
+        rightLeader.configOpenloopRamp(0.1);
 
         // Pigeon IMU
         pigeon = new PigeonIMU(DriveConstants.PIGEON_ID);
@@ -386,15 +386,25 @@ public class Drive extends Submodule {
      */
     public void tank(double left, double right, boolean reverse) {
         if (left == 0 & Math.abs(right) > 0)
-            left = -Math.copySign(0.01, right);
+            left = Math.copySign(0.0001, right);
         else if (right == 0 & Math.abs(left) > 0)
-            right = -Math.copySign(0.01, left);
+            right = Math.copySign(0.0001, left);
+
+        // if(left * right >= 0) {
+        //     double l = Math.abs(left);
+        //     double r = Math.abs(right);
+        //     if(l < r * 0.10)
+        //         left = right * 0.10;
+        //     else if(r < l * 0.10)
+        //         right = left * 0.10;
+        // }
 
         if (reverse) {
             outputLeftDrive = -left;
             outputRightDrive = -right;
             return;
         }
+
         outputLeftDrive = left;
         outputRightDrive = right;
     }

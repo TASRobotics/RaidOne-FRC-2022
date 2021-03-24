@@ -1,4 +1,15 @@
 # Overview
+## Raid One Submodule Keybinds
+keybind | action
+-- | --
+Joysticks | Drive
+Right Bumper | Flywheel & Auto-Aim
+Left Bumper | Throat (use this when shooting)
+A | Turret Reset
+!Left Bumper | Throat Indexing
+Left & Right Trigger | Hood Angler
+
+
 ## P1
 keybind | action | HYPERSHIFT action
 -- | -- | --
@@ -14,7 +25,7 @@ DPad up | Hopper forward
 DPad down | Hopper back
 
 
-## P2
+## P2 (no p2, dt op)
 keybind | action | OVERRIDE
 -- | -- | --
 start | Enables climb when held down at the same time as p1

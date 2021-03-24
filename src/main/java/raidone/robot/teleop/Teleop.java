@@ -140,13 +140,21 @@ public class Teleop {
 
             if(controller.getBumperPressed(Hand.kLeft)){
                 Throat.set(0.5);
-            } else if (controller.getBumperPressed(Hand.kRight)){
-                Robot.flywheel.setVel(0.8);
-                Robot.turret.aim(Turret.Direction.RIGHT);
             } else {
                 Throat.index();
-                Angler.setPower(controller.getTriggerAxis(Hand.kLeft) - controller.getTriggerAxis(Hand.kRight));
             }
+            
+            if (controller.getBumperPressed(Hand.kRight)){
+                Robot.flywheel.setVel(0.8);
+                Robot.turret.aim(Turret.Direction.RIGHT);
+            } else if(controller.getAButtonPressed()){
+                Robot.turret.set(1);
+            } else {
+                Robot.turret.resetPID();
+                Robot.turret.set(0);
+                Robot.flywheel.set(0);
+            }
+            Angler.setPower(controller.getTriggerAxis(Hand.kLeft) - controller.getTriggerAxis(Hand.kRight));
         // }
 
         //

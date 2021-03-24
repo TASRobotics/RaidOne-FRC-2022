@@ -83,8 +83,8 @@ public class Constants {
         public static final double DEFAULT_TARGET_ACCELERATION = 5;
 
         // Joystick to Output mapping
-        public static final double JOYSTICK_EXPONENT = 1.5;
-        public static final double JOYSTICK_COEFFICIENT = 0.9;
+        public static final double JOYSTICK_EXPONENT = 1.2;
+        public static final double JOYSTICK_COEFFICIENT = 0.7;
 
         public static final double QUICK_STOP_THRESHOLD = 0.2;
         public static final double QUICK_STOP_ALPHA = 0.1;

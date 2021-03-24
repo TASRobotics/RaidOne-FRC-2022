@@ -385,6 +385,11 @@ public class Drive extends Submodule {
      * @param reverse whether to reverse the inputs or not
      */
     public void tank(double left, double right, boolean reverse) {
+        if (left == 0 & Math.abs(right) > 0)
+            left = -Math.copySign(0.01, right);
+        else if (right == 0 & Math.abs(left) > 0)
+            right = -Math.copySign(0.01, left);
+
         if (reverse) {
             outputLeftDrive = -left;
             outputRightDrive = -right;

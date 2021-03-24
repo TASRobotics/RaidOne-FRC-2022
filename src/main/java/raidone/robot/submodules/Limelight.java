@@ -6,19 +6,25 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
-class Limelight {
+public class Limelight {
     public static final NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
     public static final NetworkTableEntry tv = table.getEntry("tv");
     public static final NetworkTableEntry tx = table.getEntry("tx");
     public static final NetworkTableEntry ty = table.getEntry("ty");
     public static final NetworkTableEntry ta = table.getEntry("ta");
     public static final NetworkTableEntry ledMode = table.getEntry("ledMode");
+    public static final NetworkTableEntry pipeline = table.getEntry("pipeline");
 
     public enum LEDState {
         NORMAL,
         OFF, 
         BLINK, 
         ON
+    }
+
+    public enum Pipeline {
+        FAR_BALL,
+        TARGET
     }
 
     //FIELD CONSTANTS
@@ -31,9 +37,14 @@ class Limelight {
         ledMode.setNumber(state.ordinal());
     }
 
+    public static void setPipeline(int number){
+        pipeline.setNumber(number);
+    }
+
     public static boolean targetDetected(){
-        SmartDashboard.putBoolean("Target Detected: ", targetDetected());
-        return tv.getDouble(0.0) > 0.0;
+        if(tv.getDouble(0.0) > 0.0){
+            return true;
+        } return false;
     }
 
     public static double getX(){
@@ -49,6 +60,6 @@ class Limelight {
     }
 
     public static double getDistance(){
-        return (GOAL_HEIGHT - LIMELIGHT_HEIGHT) / Math.tan(LIMELIGHT_ANGLE + getY()); //wtf is the angle supposed to be
+        return (GOAL_HEIGHT - LIMELIGHT_HEIGHT) / Math.tan(LIMELIGHT_ANGLE + Math.toRadians(getY())); //wtf is the angle supposed to be
     }
 }

@@ -1,22 +1,22 @@
 package raidone.robot.teleop;
 
+import edu.wpi.first.hal.SimDevice.Direction;
 import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import raidone.robot.Constants.DriveConstants;
 import raidone.robot.Constants.IntakeConstants;
-import raidone.robot.Constants.ThroatConstants;
-import raidone.robot.auto.actions.DebugLimelightDistance;
+import raidone.robot.Robot;
+// import raidone.robot.auto.actions.DebugLimelightDistance;
 import raidone.robot.dashboard.Tab;
+import raidone.robot.submodules.Angler;
 import raidone.robot.submodules.Drive;
-import raidone.robot.submodules.Intake;
-import raidone.robot.submodules.Flywheel;
-import raidone.robot.submodules.Throat;
 import raidone.robot.submodules.Drive.GearShift;
+import raidone.robot.submodules.Throat;
+import raidone.robot.submodules.Turret;
 import raidone.robot.utils.JoystickUtils;
-import raidone.robot.wrappers.InactiveCompressor;
 
 public class Teleop {
 
@@ -51,14 +51,14 @@ public class Teleop {
     }
 
     private static Drive drive = Drive.getInstance();
-    private static Shooter shooter = Shooter.getInstance();
-    private static Intake intake = Intake.getInstance();
-    private static Throat throat = Throat.getInstance();
-    private static InactiveCompressor compressor = InactiveCompressor.getInstance();
+    // private static Shooter shooter = Shooter.getInstance();
+    // private static Intake intake = Intake.getInstance();
+    // private static Throat throat = Throat.getInstance();
+    // private static InactiveCompressor compressor = InactiveCompressor.getInstance();
 
     private XboxController controller = new XboxController(0);
 
-    private DebugLimelightDistance debugDistance = new DebugLimelightDistance();
+    // private DebugLimelightDistance debugDistance = new DebugLimelightDistance();
 
     private DriveMode driveMode = DriveMode.TANK;
 
@@ -72,7 +72,7 @@ public class Teleop {
         drive.stop();
         drive.setGearShift(GearShift.LOW);
 
-        debugDistance.start();
+        // debugDistance.start();
     }
 
     /**
@@ -83,7 +83,7 @@ public class Teleop {
         p1Loop();
         // p2Loop();
 
-        debugDistance.update();
+        // debugDistance.update();
     }
 
     private void p1Loop() {
@@ -136,39 +136,18 @@ public class Teleop {
         //
         // WITHOUT HYPERSHIFT
         //
-        if (!controller.getBumper(Hand.kRight)) {
+        // if (!controller.getBumper(Hand.kRight)) {
 
-            /**
-             * Intake
-             */
-            // Run intake in
-            intake.intakeBalls(JoystickUtils
-                    .deadband(IntakeConstants.CONTROL_SCALING_FACTOR * (controller.getTriggerAxis(Hand.kLeft))));
-
-            /**
-             * Throat
-             */
-            // Loop up throat
-            if (controller.getBumperPressed(Hand.kLeft)) {
-                throat.loopBalls(70);
-            } else if (controller.getBumperReleased(Hand.kLeft)) {
-                throat.loopBalls(0);
+            if(controller.getBumperPressed(Hand.kLeft)){
+                Throat.set(0.5);
+            } else if (controller.getBumperPressed(Hand.kRight)){
+                Robot.flywheel.setVel(0.8);
+                Robot.turret.aim(Turret.Direction.RIGHT);
+            } else {
+                Throat.index();
+                Angler.setPower(controller.getTriggerAxis(Hand.kLeft) - controller.getTriggerAxis(Hand.kRight));
             }
-
-            /**
-             * Shooter
-             */
-            if (controller.getYButtonPressed()) {
-                shooter.shoot(1.0, false);
-            } else if (controller.getYButtonReleased()) {
-                shooter.shoot(0.0, false);
-            }
-
-
-            shooter.shoot((JoystickUtils.deadband(controller.getTriggerAxis(Hand.kRight))), false);
-
-            return;
-        }
+        // }
 
         //
         // WITH HYPERSHIFT
@@ -177,18 +156,18 @@ public class Teleop {
          * Intake
          */
         // Run intake out
-        intake.intakeBalls(JoystickUtils
-                .deadband(IntakeConstants.CONTROL_SCALING_FACTOR * (-controller.getTriggerAxis(Hand.kLeft))));
+        // intake.intakeBalls(JoystickUtils
+        //         .deadband(IntakeConstants.CONTROL_SCALING_FACTOR * (-controller.getTriggerAxis(Hand.kLeft))));
 
         /**
          * Throat
          */
         // Loop down throat
-        if (controller.getBumperPressed(Hand.kLeft)) {
-            throat.loopBalls(-70);
-        } else if (controller.getBumperReleased(Hand.kLeft)) {
-            throat.loopBalls(0);
-        }
+        // if (controller.getBumperPressed(Hand.kLeft)) {
+        //     throat.loopBalls(-70);
+        // } else if (controller.getBumperReleased(Hand.kLeft)) {
+        //     throat.loopBalls(0);
+        // }
 
     }
 

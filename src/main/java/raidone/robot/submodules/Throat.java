@@ -1,7 +1,7 @@
 package raidone.robot.submodules;
 
-import edu.wpi.first.wpilibj.AnalogInput;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.playingwithfusion.TimeOfFlight;
 
 public class Throat {
     //THROAT MOTORS
@@ -9,7 +9,7 @@ public class Throat {
     public static final WPI_TalonFX _throatleft = new WPI_TalonFX(22);
 
     //THROAT SENSOR(S)
-    public static final AnalogInput _ballDetector = new AnalogInput(1); //change
+    public static final TimeOfFlight _throatSensor = new TimeOfFlight(0);
 
     public enum Speed { 
         DOWN, 
@@ -20,40 +20,34 @@ public class Throat {
     }
 
     //CONSTANTS
-    public static final double BALL_DETECTED_VALUE = 0.0;
+    public static final double BALL_DETECTED_VALUE = 80.0;
 
     //HELPER FUNCTIONS
     public static void set(double percent){
         _throatright.set(percent);
     }
 
-    public static void setState(Speed speed){
-        switch(speed.ordinal()){ //is this bad programming practice? yes. but am i gonna use it? yes.
-            case 0:
+    public static void setState(Speed set){
+        if(set == Speed.DOWN){
             set(-1);
-            break;
-
-            case 1:
+        }
+        if(set == Speed.UP){
             set(1);
-            break;
-
-            case 2:
-            set(0.25);
-            break;
-
-            case 3:
-            set(-0.25);
-            break;
-
-            default:
+        }
+        if(set == Speed.UP_SLOW){
+            set(0.3);
+        }
+        if(set == Speed.DOWN_SLOW){
+            set(-0.3);
+        } 
+        if(set == Speed.STOP){
             set(0);
-            break;
         }
     }
 
     public static void index(){
-        set(1); //i don't even think this is wired
-        if(_ballDetector.getValue() > BALL_DETECTED_VALUE){ //idk, tune or smth
+        set(0.20); //i don't even think this is wired
+        if(_throatSensor.getRange() < BALL_DETECTED_VALUE){ //idk, tune or smth
             set(0);
         }
     }

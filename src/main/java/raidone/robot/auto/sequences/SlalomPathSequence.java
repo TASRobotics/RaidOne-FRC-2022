@@ -15,10 +15,10 @@ public class SlalomPathSequence extends AutoSequence {
 
     private static final Point[] FIRST_CURVE_WAYPOINTS = {
         new Point(0, 0, 0),
-        new Point(81, 43),
+        new Point(78, 53),
         new Point(192, 63),
-        new Point(240, 30),
-        new Point(270, -16, 0)
+        new Point(235, 30),
+        new Point(268, -2, 0)
     };
     private static final Path FIRST_CURVE_PATH = new Path(FIRST_CURVE_WAYPOINTS, false,
         DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
@@ -26,12 +26,12 @@ public class SlalomPathSequence extends AutoSequence {
     private static final Point[] SECOND_CURVE_WAYPOINTS = {
         new Point(0, 0, 0),
         new Point(28, 49),
-        new Point(-2, 71),
+        new Point(-2, 78),
         new Point(-40, 39),
         new Point(-133, -11, 180),
         new Point(-198, -3),
         new Point(-234, 35, 135),
-        new Point(-270, 64, 180)
+        new Point(-250, 60, 180)
     };
     private static final Path SECOND_CURVE_PATH = new Path(SECOND_CURVE_WAYPOINTS, false,
         DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);

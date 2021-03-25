@@ -19,7 +19,8 @@ public class AutoRunner {
     private AutoSequence[] availableSequences = { //list out sequences
         new TestSequence(),
         new StealCellSequence(),
-        new SlalomPathSequence()
+        new SlalomPathSequence(),
+        new BouncePathSequence()
     };
 
     public AutoRunner() {

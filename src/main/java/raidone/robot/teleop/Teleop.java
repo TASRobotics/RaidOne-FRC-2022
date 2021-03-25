@@ -69,6 +69,7 @@ public class Teleop {
      * Runs at the start of teleop.
      */
     public void onStart() {
+        drive.zero();
         drive.stop();
         drive.setGearShift(GearShift.LOW);
         drive.setBrakeMode(true);
@@ -132,6 +133,10 @@ public class Teleop {
             drive.setBrakeMode(true);
         } else if (controller.getAButtonReleased()) {
             drive.setBrakeMode(false);
+        }
+
+        if (controller.getXButtonPressed()) {
+            drive.zero();
         }
 
         //

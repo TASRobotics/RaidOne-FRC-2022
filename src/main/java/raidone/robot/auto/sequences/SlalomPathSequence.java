@@ -13,37 +13,46 @@ import raidone.robot.submodules.Shooter;
 
 public class SlalomPathSequence extends AutoSequence {
 
-    // private static final Point[] FRONT_CURVE_WAYPOINTS = {
-    //     new Point(-60, 90, 0),
-    //     new Point(-60, 210, 0),
-    //     new Point(0, 270, 0)
-    // };
-    private static final Point[] FRONT_CURVE_WAYPOINTS = {
+    private static final Point[] FIRST_CURVE_WAYPOINTS = {
         new Point(0, 0, 0),
-        new Point(60, -30, 0)
+        new Point(81, 43),
+        new Point(192, 63),
+        new Point(240, 30),
+        new Point(270, -16, 0)
     };
-    private static final Path FRONT_CURVE_PATH = new Path(FRONT_CURVE_WAYPOINTS, false,
+    private static final Path FIRST_CURVE_PATH = new Path(FIRST_CURVE_WAYPOINTS, false,
         DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
-    // private static final Point[] MIDDLE_CURVE_WAYPOINTS = {
-    //     new Point(-30, 320, -90),
-    //     new Point(-60, 270, -180),
+    private static final Point[] SECOND_CURVE_WAYPOINTS = {
+        new Point(0, 0, 0),
+        new Point(28, 49),
+        new Point(-2, 71),
+        new Point(-40, 39),
+        new Point(-133, -11, 180),
+        new Point(-198, -3),
+        new Point(-234, 35, 135),
+        new Point(-270, 64, 180)
+    };
+    private static final Path SECOND_CURVE_PATH = new Path(SECOND_CURVE_WAYPOINTS, false,
+        DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
+    
+    // private static final Point[] THIRD_CURVE_WAYPOINTS = {
+    //     new Point(310, 30, -90),
+    //     new Point(270, 60, 180),
+    //     new Point(240, 30, 135),
+    //     new Point(150, 0, 180)
     // };
-    // private static final Path MIDDLE_CURVE_PATH = new Path(MIDDLE_CURVE_WAYPOINTS, true,
-    //     7.5, DriveConstants.DEFAULT_TARGET_ACCELERATION);
-
-
-    // private static final Point[] BACK_CURVE_WAYPOINTS = {
-    //     new Point(0, 210, -180),
-    //     new Point(0, 90, -180),
-    //     new Point(-60, 0, -180)
+    // private static final Path THIRD_CURVE_PATH = new Path(THIRD_CURVE_WAYPOINTS, false,
+    //     DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
+    
+    // private static final Point[] FOURTH_CURVE_WAYPOINTS = {
+    //     new Point(150, 0, 180),
+    //     new Point(80, 10, -135),
+    //     new Point(0, 60, 180)
     // };
-    // private static final Point[] BACK_CURVE_WAYPOINTS = {
-    //     new Point(0,0,0)
-    // };
-    // private static final Path BACK_CURVE_PATH = new Path(BACK_CURVE_WAYPOINTS, true,
-    //     7.5, DriveConstants.DEFAULT_TARGET_ACCELERATION);
-
+    // private static final Path FOURTH_CURVE_PATH = new Path(FOURTH_CURVE_WAYPOINTS, false,
+    //     DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
+    
     public SlalomPathSequence() {
         System.out.println(DriverStation.getInstance().getAlliance().name());
     }               
@@ -54,17 +63,22 @@ public class SlalomPathSequence extends AutoSequence {
             Arrays.asList(
                 new ParallelAction(
                     Arrays.asList(
-                        new DrivePath(FRONT_CURVE_PATH)
+                        new DrivePath(FIRST_CURVE_PATH)
+                    )
+                ),
+                new ParallelAction(
+                    Arrays.asList(
+                        new DrivePath(SECOND_CURVE_PATH)
                     )
                 )
                 // new ParallelAction(
                 //     Arrays.asList(
-                //         new DrivePath(MIDDLE_CURVE_PATH)
+                //         new DrivePath(THIRD_CURVE_PATH)
                 //     )
                 // ),
                 // new ParallelAction(
                 //     Arrays.asList(
-                //         new DrivePath(BACK_CURVE_PATH)
+                //         new DrivePath(FOURTH_CURVE_PATH)
                 //     )
                 // )
             )
@@ -79,6 +93,6 @@ public class SlalomPathSequence extends AutoSequence {
 
     @Override
     public String getName() {
-        return "Slalom Path Sequence ended.";
+        return "Slalom Path Sequence";
     }
 }

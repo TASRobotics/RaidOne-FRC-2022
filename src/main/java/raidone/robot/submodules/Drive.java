@@ -117,7 +117,7 @@ public class Drive extends Submodule {
 
         rightLeader = new LazyTalonSRX(DriveConstants.RIGHT_LEADER_ID);
         configureMotor(rightLeader, DriveConstants.RIGHT_INVERSION);
-        rightLeader.setSensorPhase(false);
+        rightLeader.setSensorPhase(true);
 
         rightFollowerA = new LazyVictorSPX(DriveConstants.RIGHT_FOLLOWERA_ID);
         configureMotor(rightFollowerA, DriveConstants.RIGHT_INVERSION);
@@ -199,7 +199,8 @@ public class Drive extends Submodule {
         TalonSRXConfiguration followerConfig = new TalonSRXConfiguration();
 
         // Use the integrated encoder on the falcons as feedback
-        followerConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor;
+        // leaderConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.QuadEncoder;
+        followerConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.QuadEncoder;
 
         // Configure the follower encoder as a remote sensor for the leader
         leaderConfig.remoteFilter0.remoteSensorDeviceID = profilingFollower.getDeviceID();
@@ -277,7 +278,7 @@ public class Drive extends Submodule {
     private void setRobotDistanceConfigs(InvertType masterInvertType,
             TalonSRXConfiguration masterConfig) {
         masterConfig.sum0Term = FeedbackDevice.RemoteSensor0; // Aux Selected Sensor
-        masterConfig.sum1Term = FeedbackDevice.IntegratedSensor; // Local IntegratedSensor
+        masterConfig.sum1Term = FeedbackDevice.QuadEncoder; // Local IntegratedSensor
         masterConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.SensorSum;
         masterConfig.primaryPID.selectedFeedbackCoefficient = 0.5;
     }
@@ -363,8 +364,10 @@ public class Drive extends Submodule {
          * setSelectedSensorPosition would set the sensor sum for the PID, which is
          * not what we want to do.
          */
-        leftLeader.setSelectedSensorPosition(0.0, 0, Constants.TIMEOUT_MS);
-        rightLeader.setSelectedSensorPosition(0.0, 0, Constants.TIMEOUT_MS);
+        leftLeader.getSensorCollection().setQuadraturePosition(0, Constants.TIMEOUT_MS);
+        rightLeader.getSensorCollection().setQuadraturePosition(0, Constants.TIMEOUT_MS);
+        // leftLeader.setSelectedSensorPosition(0.0, 0, Constants.TIMEOUT_MS);
+        // rightLeader.setSelectedSensorPosition(0.0, 0, Constants.TIMEOUT_MS);
         pigeon.setYaw(0.0);
     }
 

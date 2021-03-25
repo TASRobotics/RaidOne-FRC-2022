@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import raidone.robot.auto.sequences.*;
 import raidone.robot.dashboard.Tab;
+import raidone.robot.submodules.Drive;
 
 /**
  * Class that manages autonomous sequences.
@@ -13,6 +14,7 @@ public class AutoRunner {
     private SendableChooser<AutoSequence> chooser;
 
     private AutoSequence selectedSequence;
+    private static Drive drive = Drive.getInstance();
 
     private AutoSequence[] availableSequences = { //list out sequences
         new TestSequence(),
@@ -62,6 +64,7 @@ public class AutoRunner {
      * Starts the selected autonomous sequence.
      */
     public void start() {
+        drive.zero();
         if (selectedSequence != null) {
             System.out.println("[Auto] Starting auto sequence '" + selectedSequence.getName() + "'...");
             selectedSequence.run();

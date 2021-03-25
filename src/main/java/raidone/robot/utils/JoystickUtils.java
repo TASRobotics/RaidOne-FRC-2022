@@ -27,6 +27,6 @@ public class JoystickUtils {
      */
     public static double monomialScale(double input, double exp, 
         double coef) {
-        return Math.copySign(coef * Math.pow(input, exp), input);
+        return Math.copySign(coef * Math.pow(Math.abs(input), exp), input);
     }
 }

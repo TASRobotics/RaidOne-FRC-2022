@@ -14,31 +14,37 @@ import raidone.robot.submodules.Shooter;
 public class BouncePathSequence extends AutoSequence {
 
     private static final Point[] FIRST_CURVE_WAYPOINTS = {
-        new Point(50, -40, -45)
+        new Point(35, 35, 180),
+        new Point(50, 100) //A3
     };
     private static final Path FIRST_CURVE_PATH = new Path(FIRST_CURVE_WAYPOINTS, false,
         7.5, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
     private static final Point[] SECOND_CURVE_WAYPOINTS = {
-        new Point(-70, -100, -45),
-        new Point(50, -130, -45)
+        new Point(30, -100),
+        new Point(75, -200),
+        new Point(125, -100),
+        new Point(150, 0, 75) //A6
     };
     private static final Path SECOND_CURVE_PATH = new Path(SECOND_CURVE_WAYPOINTS, false,
         7.5, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
     private static final Point[] THIRD_CURVE_WAYPOINTS = {
-        new Point(-55, -190, -45),
-        new Point(50, -220, -45)
+        new Point(30, -100),
+        new Point(75, -200),
+        new Point(325, -100),
+        new Point(150, 0, 75) //A9
     };
     private static final Path THIRD_CURVE_PATH = new Path(THIRD_CURVE_WAYPOINTS, false,
         7.5, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
     private static final Point[] FOURTH_CURVE_WAYPOINTS = {
-        new Point(0, -280, 180)
+        new Point(35, -65),
+        new Point(80, 0, -100)
     };
     private static final Path FOURTH_CURVE_PATH = new Path(FOURTH_CURVE_WAYPOINTS, false,
         7.5, DriveConstants.DEFAULT_TARGET_ACCELERATION);
-
+ 
     
     public BouncePathSequence() {
         System.out.println(DriverStation.getInstance().getAlliance().name());

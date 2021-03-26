@@ -12,12 +12,12 @@ import raidone.robot.submodules.Intake;
 import raidone.robot.submodules.Shooter;
 
 public class BouncePathSequence extends AutoSequence {
-    private static final Point[] TEST_CURVE_WAYPOINTS = {
-        new Point(0, 0, 0),
-        new Point(60, 0, 0)
-    };
-    private static final Path TEST_CURVE_PATH = new Path(TEST_CURVE_WAYPOINTS, true,
-        DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
+    //private static final Point[] TEST_CURVE_WAYPOINTS = {
+        //new Point(0, 0, 0),
+        //new Point(60, 0, 0)
+    //};
+    //private static final Path TEST_CURVE_PATH = new Path(TEST_CURVE_WAYPOINTS, true,
+        //DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
     private static final Point[] FIRST_CURVE_WAYPOINTS = {
         new Point(0, 0, 0),
@@ -38,20 +38,20 @@ public class BouncePathSequence extends AutoSequence {
 
     private static final Point[] THIRD_CURVE_WAYPOINTS = {
         new Point(0, 0, 270),
-        new Point(30, -100),
-        new Point(75, -200),
-        new Point(325, -100),
-        new Point(150, 0, 75) //A9
+        new Point(-30, 100),
+        new Point(-75, 200, 360),
+        new Point(-125, 100),
+        new Point(150, 0, 450) //A9
     };
-    private static final Path THIRD_CURVE_PATH = new Path(THIRD_CURVE_WAYPOINTS, false,
+    private static final Path THIRD_CURVE_PATH = new Path(THIRD_CURVE_WAYPOINTS, true,
     DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
     private static final Point[] FOURTH_CURVE_WAYPOINTS = {
-        new Point(0, 0, 0),
-        new Point(35, -65),
-        new Point(80, 0, -100)
+        new Point(0, 0, 450),
+        new Point(-35, 65),
+        new Point(-80, 0, 540)
     };
-    private static final Path FOURTH_CURVE_PATH = new Path(FOURTH_CURVE_WAYPOINTS, false,
+    private static final Path FOURTH_CURVE_PATH = new Path(FOURTH_CURVE_WAYPOINTS, true,
     DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
  
     

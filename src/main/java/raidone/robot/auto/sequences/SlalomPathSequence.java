@@ -59,6 +59,16 @@ public class SlalomPathSequence extends AutoSequence {
     private static final Path FOURTH_CURVE_PATH = new Path(FOURTH_CURVE_WAYPOINTS, false,
         DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
     
+    private static final Point[] FIFTH_CURVE_WAYPOINTS = {
+        new Point(0, 0, 270),
+        new Point(-37, -83),
+        new Point(-107, -94),
+        new Point(-220, -65),
+        new Point(-329, 14, 480)
+    };
+    private static final Path FIFTH_CURVE_PATH = new Path(FIFTH_CURVE_WAYPOINTS, false,
+        DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
+    
     public SlalomPathSequence() {
         System.out.println(DriverStation.getInstance().getAlliance().name());
     }               

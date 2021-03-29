@@ -40,33 +40,29 @@ public class SlalomPathSequence extends AutoSequence {
     private static final Path THIRD_CURVE_PATH = new Path(THIRD_CURVE_WAYPOINTS, false,
         DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
     
-    // // private static final Point[] THIRD_CURVE_WAYPOINTS = {
-    //     new Point(-40, 39),
-    //     new Point(-133, -11, 180),
-    //     new Point(-198, -3),
-    //     new Point(-234, 35, 135),
-    //     new Point(-250, 60, 180)
-    // // };
-    // private static final Path THIRD_CURVE_PATH = new Path(THIRD_CURVE_WAYPOINTS, false,
-    //     DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
-    
     private static final Point[] FOURTH_CURVE_WAYPOINTS = {
         new Point(0, 0, 90),
         new Point(0, 10),
-        new Point(-62, -30, 270),
-        new Point(-62, -40, 270)
+        new Point(-62, -30),
+        new Point(-62, -62, -90)
     };
     private static final Path FOURTH_CURVE_PATH = new Path(FOURTH_CURVE_WAYPOINTS, false,
         DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
     
     private static final Point[] FIFTH_CURVE_WAYPOINTS = {
-        new Point(0, 0, 270),
-        new Point(-37, -83),
-        new Point(-107, -94),
-        new Point(-220, -65),
-        new Point(-329, 14, 480)
+        new Point(0, 0, -90),
+        new Point(-30, -20, -180),
+        new Point(-150, -5, -180),
     };
     private static final Path FIFTH_CURVE_PATH = new Path(FIFTH_CURVE_WAYPOINTS, false,
+        DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
+        
+    private static final Point[] SIXTH_CURVE_WAYPOINTS = {
+        new Point(0, 0, -180),
+        new Point(-30, 60, -270),
+        new Point(-40, 92, -225)
+    };
+    private static final Path SIXTH_CURVE_PATH = new Path(SIXTH_CURVE_WAYPOINTS, false,
         DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
     
     public SlalomPathSequence() {
@@ -95,6 +91,16 @@ public class SlalomPathSequence extends AutoSequence {
                 new ParallelAction(
                     Arrays.asList(
                         new DrivePath(FOURTH_CURVE_PATH)
+                    )
+                ),
+                new ParallelAction(
+                    Arrays.asList(
+                        new DrivePath(FIFTH_CURVE_PATH)
+                    )
+                ),
+                new ParallelAction(
+                    Arrays.asList(
+                        new DrivePath(SIXTH_CURVE_PATH)
                     )
                 )
             )

@@ -100,6 +100,6 @@ public class BouncePathSequence extends AutoSequence {
 
     @Override
     public String getName() {
-        return "Bounce Path Sequence ended.";
+        return "Bounce Path Sequence";
     }
 }

@@ -1,5 +1,7 @@
 package raidone.robot.auto;
 
+import com.ctre.phoenix.sensors.PigeonIMU;
+
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import raidone.robot.auto.sequences.*;
@@ -90,6 +92,7 @@ public class AutoRunner {
     public void onLoop(double timestamp) {
         if (selectedSequence != null) {
             selectedSequence.onLoop(timestamp);
+            // System.out.println(drive.getPigeonValue());
         }
     }
 }

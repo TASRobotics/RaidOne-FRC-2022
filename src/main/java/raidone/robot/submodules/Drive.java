@@ -576,4 +576,10 @@ public class Drive extends Submodule {
         }
         return mpFollower.isFinished();
     }
+
+    public double getPigeonValue(){
+        double[] ypr_deg = new double[3];
+        pigeon.getYawPitchRoll(ypr_deg);
+        return ypr_deg[0];
+    }
 }

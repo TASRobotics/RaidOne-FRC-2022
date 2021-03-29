@@ -77,12 +77,12 @@ public class BouncePathSequence extends AutoSequence {
                     Arrays.asList(
                         new DrivePath(SECOND_CURVE_PATH)
                     )
-                )
-                // new ParallelAction(
-                //     Arrays.asList(
-                //         new DrivePath(THIRD_CURVE_PATH)
-                //     )
-                // ),
+                ),
+                new ParallelAction(
+                    Arrays.asList(
+                        new DrivePath(THIRD_CURVE_PATH)
+                    )
+                )//,
                 // new ParallelAction(
                 //     Arrays.asList(
                 //         new DrivePath(FOURTH_CURVE_PATH)

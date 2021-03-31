@@ -27,21 +27,21 @@ public class BouncePathSequence extends AutoSequence {
         DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
     private static final Point[] SECOND_CURVE_WAYPOINTS = {
-        new Point(0, 0, 90),
-        new Point(-20, 100),
-        new Point(-65, 200, 180),
-        new Point(-115, 100),
-        new Point(-140, 0, -90) //A6
+        new Point(0, 0, 90), //lowered x coordinates by 15
+        new Point(-15, 100),
+        new Point(-60, 200, 180),
+        new Point(-110, 100),
+        new Point(-135, 0, -90) //A6
     };
     private static final Path SECOND_CURVE_PATH = new Path(SECOND_CURVE_WAYPOINTS, true,
     DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
     private static final Point[] THIRD_CURVE_WAYPOINTS = {
         new Point(0, 0, -90),
-        new Point(20, -100),
-        new Point(65, -200, 0),
-        new Point(115, -100),
-        new Point(140, 0, 90) //A9
+        new Point(15, -100),
+        new Point(60, -200, 0),
+        new Point(110, -100),
+        new Point(135, 0, 90) //A9
     };
     private static final Path THIRD_CURVE_PATH = new Path(THIRD_CURVE_WAYPOINTS, false,
     DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
@@ -68,16 +68,16 @@ public class BouncePathSequence extends AutoSequence {
                 //         new DrivePath(TEST_CURVE_PATH)
                 //     )
                 // )
-                // new ParallelAction(
-                //     Arrays.asList(
-                //         new DrivePath(FIRST_CURVE_PATH)
-                //     )
-                // ),
-                // new ParallelAction(
-                //     Arrays.asList(
-                //         new DrivePath(SECOND_CURVE_PATH)
-                //     )
-                // ),
+                new ParallelAction(
+                    Arrays.asList(
+                        new DrivePath(FIRST_CURVE_PATH)
+                    )
+                ),
+                new ParallelAction(
+                    Arrays.asList(
+                        new DrivePath(SECOND_CURVE_PATH)
+                    )
+                ),
                 new ParallelAction(
                     Arrays.asList(
                         new DrivePath(THIRD_CURVE_PATH)

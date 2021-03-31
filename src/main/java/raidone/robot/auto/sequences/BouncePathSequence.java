@@ -21,35 +21,35 @@ public class BouncePathSequence extends AutoSequence {
 
     private static final Point[] FIRST_CURVE_WAYPOINTS = {
         new Point(0, 0, 0),
-        new Point(50, 100, 90) //A3
+        new Point(50, 70, 90) //A3
     };
     private static final Path FIRST_CURVE_PATH = new Path(FIRST_CURVE_WAYPOINTS, false,
         DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
     private static final Point[] SECOND_CURVE_WAYPOINTS = {
         new Point(0, 0, 90),
-        new Point(-30, 100),
-        new Point(-75, 200, 180),
-        new Point(-125, 100),
-        new Point(-150, 0, 270) //A6
+        new Point(-20, 100),
+        new Point(-55, 200, 180),//+30x
+        new Point(-105, 100), //+40x
+        new Point(-130, 0, 270) //A6
     };
     private static final Path SECOND_CURVE_PATH = new Path(SECOND_CURVE_WAYPOINTS, true,
     DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
     private static final Point[] THIRD_CURVE_WAYPOINTS = {
         new Point(0, 0, 270),
-        new Point(-30, 100),
-        new Point(-75, 200, 360),
-        new Point(-125, 100),
-        new Point(150, 0, 450) //A9
+        new Point(-20, 100),
+        new Point(-55, 200, 360),
+        new Point(-105, 100),
+        new Point(-130, 0, 450) //A9
     };
     private static final Path THIRD_CURVE_PATH = new Path(THIRD_CURVE_WAYPOINTS, true,
     DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
     private static final Point[] FOURTH_CURVE_WAYPOINTS = {
         new Point(0, 0, 450),
-        new Point(-35, 65),
-        new Point(-80, 0, 540)
+        new Point(-25, 65),
+        new Point(-50, 0, 540)
     };
     private static final Path FOURTH_CURVE_PATH = new Path(FOURTH_CURVE_WAYPOINTS, true,
     DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
@@ -78,7 +78,7 @@ public class BouncePathSequence extends AutoSequence {
                         new DrivePath(SECOND_CURVE_PATH)
                     )
                 ),
-                new ParallelAction(
+                ne-w ParallelAction(
                     Arrays.asList(
                         new DrivePath(THIRD_CURVE_PATH)
                     )

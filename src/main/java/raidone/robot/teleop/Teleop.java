@@ -16,6 +16,7 @@ import raidone.robot.submodules.Drive;
 import raidone.robot.submodules.Drive.GearShift;
 import raidone.robot.submodules.Throat;
 import raidone.robot.submodules.Turret;
+import raidone.robot.submodules.Intake;
 import raidone.robot.utils.JoystickUtils;
 
 public class Teleop {
@@ -132,28 +133,36 @@ public class Teleop {
         } else if (controller.getAButtonReleased()) {
             drive.setBrakeMode(false);
         }
+        drive.setBrakeMode(true);
 
         //
         // WITHOUT HYPERSHIFT
         //
         // if (!controller.getBumper(Hand.kRight)) {
 
-            if(controller.getBumperPressed(Hand.kLeft)){
+            if(controller.getBumper(Hand.kLeft)){
                 Throat.set(0.5);
             } else {
                 Throat.index();
             }
             
-            if (controller.getBumperPressed(Hand.kRight)){
+            if (controller.getBumper(Hand.kRight)){
                 Robot.flywheel.setVel(0.8);
                 Robot.turret.aim(Turret.Direction.RIGHT);
-            } else if(controller.getAButtonPressed()){
-                Robot.turret.set(1);
             } else {
                 Robot.turret.resetPID();
-                Robot.turret.set(0);
+                Robot.turret.reset(Turret.Direction.LEFT);
                 Robot.flywheel.set(0);
             }
+
+            if(controller.getStickButton(Hand.kRight)){
+                Intake.set(0.5);
+            } else if(controller.getStickButton(Hand.kLeft)){
+                Intake.set(-0.5);
+            } else {
+                Intake.set(0.0);
+            }
+
             Angler.setPower(controller.getTriggerAxis(Hand.kLeft) - controller.getTriggerAxis(Hand.kRight));
         // }
 

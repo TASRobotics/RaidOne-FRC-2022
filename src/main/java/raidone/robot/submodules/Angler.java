@@ -24,9 +24,18 @@ public class Angler {
     }
 
     //ANGLE ADJUSTER HELPER FUNCTIONS
+    public static double map(double value, double start1, double stop1, double start2, double stop2){
+        return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
+    }
+
     public static void setPower(double percent){
-        _leftServo.set(percent);
-        _rightServo.set(-percent); //reversed
+        //_leftServo.set(percent);
+        //_rightServo.set(-percent); //reversed
+
+        double leftSpeed = map(percent, -1, 1, 0, 180);
+        double rightSpeed = map(percent, -1, 1, 180, 0);
+        _leftServo.setAngle(leftSpeed);
+        _rightServo.setAngle(rightSpeed);
     }
     
 

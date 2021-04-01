@@ -46,9 +46,10 @@ public class Throat {
     }
 
     public static void index(){
-        set(0.20); //i don't even think this is wired
         if(_throatSensor.getRange() < BALL_DETECTED_VALUE){ //idk, tune or smth
             set(0);
+        } else {
+            set(0.25);
         }
     }
 }

@@ -1,6 +1,7 @@
 package raidone.robot.submodules;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import jdk.jfr.Percentage;
 
 //Talon FX
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
@@ -11,6 +12,8 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANPIDController;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.FollowerType;
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
@@ -50,6 +53,8 @@ public class Flywheel {
         config.slot0.kD = 5.0;
         config.slot0.integralZone = 0.0;
         _shooterright.configAllSettings(config);
+        _shooterleft.setInverted(InvertType.InvertMotorOutput);
+        _shooterleft.follow(_shooterright, FollowerType.PercentOutput);
     }
 
     //FLYWHEEL (kicker & main) HELPER FUNCTIONS

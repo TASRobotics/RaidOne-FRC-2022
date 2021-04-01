@@ -14,32 +14,40 @@ import raidone.robot.submodules.Shooter;
 public class BarrelPathSequence extends AutoSequence {
 
     private static final Point[] FIRST_LOOP_WAYPOINTS = {
-        new Point(30, 135, 70),
-        new Point(40, 120, 180),
-        new Point(30, 105, -60),
-        new Point(0, 140, -10)
+        new Point(0, 0, 0),
+        new Point(95, 0, -15),
+        new Point(130, -30),
+        new Point(100, -60),
+        new Point(60, -30),
+        new Point(130, 10, 0)
     };
     private static final Path FIRST_LOOP_PATH = new Path(FIRST_LOOP_WAYPOINTS, false,
         7.5, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
     private static final Point[] SECOND_LOOP_WAYPOINTS = {
-        new Point(-40, 259, -100),
-        new Point(-40, 195, 135)
+        new Point(0, 0, 0),
+        new Point(60, 0, 0),
+        new Point(100, 30),
+        new Point(60, 60),
+        new Point(15, 20),
+        new Point(15, 5),
+        new Point(60, -25, -60)
     };
     private static final Path SECOND_LOOP_PATH = new Path(SECOND_LOOP_WAYPOINTS, false,
         7.5, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
     private static final Point[] THIRD_LOOP_WAYPOINTS = {
-        new Point(40, 250, 20),
-        new Point(15, 290, -90),
-        new Point(0, 250, -70)
+        new Point(0, 0 ,-60),
+        new Point(65, -45),
+        new Point(95, -15),
+        new Point(60, 14, -180)
     };
     private static final Path THIRD_LOOP_PATH = new Path(THIRD_LOOP_WAYPOINTS, false,
         7.5, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
     private static final Point[] FOURTH_LOOP_WAYPOINTS = {
-        new Point(-20, 120, -180),
-        new Point(-20, 30, -180)
+        new Point(0, 0, -180),
+        new Point(-250, 20, -180)
     };
     private static final Path FOURTH_LOOP_PATH = new Path(FOURTH_LOOP_WAYPOINTS, false,
         7.5, DriveConstants.DEFAULT_TARGET_ACCELERATION);
@@ -79,11 +87,11 @@ public class BarrelPathSequence extends AutoSequence {
 
     @Override
     public void onEnded() {
-        System.out.println("Bounce Path Sequence ended!");
+        System.out.println("Barrel Path Sequence ended!");
     }
 
     @Override
     public String getName() {
-        return "Bounce Path Sequence";
+        return "Barrel Path Sequence";
     }
 }

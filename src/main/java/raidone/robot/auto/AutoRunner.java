@@ -22,7 +22,8 @@ public class AutoRunner {
         new TestSequence(),
         new StealCellSequence(),
         new SlalomPathSequence(),
-        new BouncePathSequence()
+        new BouncePathSequence(),
+        new BarrelPathSequence()
     };
 
     public AutoRunner() {

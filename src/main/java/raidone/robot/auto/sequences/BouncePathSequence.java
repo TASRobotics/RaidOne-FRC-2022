@@ -54,8 +54,8 @@ public class BouncePathSequence extends AutoSequence {
 
     private static final Point[] FIFTH_CURVE_WAYPOINTS = {
         //THIS POINT IS THE SOURCE OF OUR PROBLEMS--> new Point(0, 0, 180),
-        new Point(5, 0, 180),
-        new Point(0, 120, 90) //EXPERIMENT THE X COORDINATE ON THIS ONE
+        new Point(15, 0, 180),
+        new Point(20, 120, 115) //EXPERIMENT THE X COORDINATE ON THIS ONE
     };
     private static final Path FIFTH_CURVE_PATH = new Path(FIFTH_CURVE_WAYPOINTS, false,
     DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);

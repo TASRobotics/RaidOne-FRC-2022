@@ -20,65 +20,29 @@ public class BouncePathSequence extends AutoSequence {
         //DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
     private static final Point[] FIRST_CURVE_WAYPOINTS = {
-        new Point(0, 0, 0),
-<<<<<<< Updated upstream
-        new Point(45, 60, 90) //A3 -- (50, 100, 90)
-=======
-<<<<<<< HEAD
         new Point(10, 0, 0),
-        new Point(50, 60, 90) //A3
-=======
         new Point(45, 60, 90) //A3 -- (50, 100, 90)
->>>>>>> 5000d7aa1344ec53c5f0cd091b184d9191df7938
->>>>>>> Stashed changes
     };
     private static final Path FIRST_CURVE_PATH = new Path(FIRST_CURVE_WAYPOINTS, false,
         DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
     private static final Point[] SECOND_CURVE_WAYPOINTS = {
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
-        new Point(0, 0, 90), //lowered x coordinates by 15
-        new Point(-30, 90),
-        new Point(-60, 120, 180),
-        new Point(-90, 90),
-        new Point(-90, 0, -90) //A6
-=======
->>>>>>> Stashed changes
         new Point(0, 0, 90), //comments are old points for reference purposes
         new Point(-30, 95), //(-15, 100)
         new Point(-60, 120, 180), //(-60, 200, 180)
         new Point(-85, 95),//(-110, 100)
         new Point(-90, 0, -90) //A6 -- (-135, 0, -90)
-<<<<<<< Updated upstream
-=======
->>>>>>> 5000d7aa1344ec53c5f0cd091b184d9191df7938
->>>>>>> Stashed changes
     };
     private static final Path SECOND_CURVE_PATH = new Path(SECOND_CURVE_WAYPOINTS, true,
     DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
     private static final Point[] THIRD_CURVE_WAYPOINTS = {
         new Point(0, 0, -90),
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
-        new Point(15, -90),
-        new Point(45, -110, 0),
-        new Point(75, -90),
-        new Point(90, 0, 90) //A9
-=======
->>>>>>> Stashed changes
         new Point(10, -95), //(15, -100)
         new Point(30, -110, 0), //(60, -200, 0)
         new Point(60, -110), //(110, -100)
         new Point(80, -95), //newly added
         new Point(90, 0, 90) //A9 -- (135, 0, 90)
-<<<<<<< Updated upstream
-=======
->>>>>>> 5000d7aa1344ec53c5f0cd091b184d9191df7938
->>>>>>> Stashed changes
     };
     private static final Path THIRD_CURVE_PATH = new Path(THIRD_CURVE_WAYPOINTS, false,
     DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
@@ -86,19 +50,12 @@ public class BouncePathSequence extends AutoSequence {
     private static final Point[] FOURTH_CURVE_WAYPOINTS = {
         new Point(0, 0, 90),
         //new Point(-35, 65),
-<<<<<<< Updated upstream
         new Point(-60, 60, 180) //(-50, 65, 180)
-=======
-<<<<<<< HEAD
-        new Point(-40, 60, 180)
-=======
-        new Point(-60, 60, 180) //(-50, 65, 180)
->>>>>>> 5000d7aa1344ec53c5f0cd091b184d9191df7938
->>>>>>> Stashed changes
     };
     private static final Path FOURTH_CURVE_PATH = new Path(FOURTH_CURVE_WAYPOINTS, true,
     DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
  
+    // test
     
     public BouncePathSequence() {
         System.out.println(DriverStation.getInstance().getAlliance().name());

@@ -39,23 +39,23 @@ public class BouncePathSequence extends AutoSequence {
 
     private static final Point[] THIRD_CURVE_WAYPOINTS = {
         new Point(0, 0, 180),//(-110, 100)
-        new Point(5, 120, 90) //A6 -- (-135, 0, -90)
+        new Point(-10, 120, 90) //A6 -- (-135, 0, -90)
     };
     private static final Path THIRD_CURVE_PATH = new Path(THIRD_CURVE_WAYPOINTS, false,
     DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
     private static final Point[] FOURTH_CURVE_WAYPOINTS = {
         new Point(0, 0, 90),//(-110, 100)
-        new Point(-40, 120, 180), 
-        new Point(-90, 110, 180) //A6 -- (-135, 0, -90)
+        new Point(-40, 110, 180), 
+        new Point(-120, 110, 180) //A6 -- (-135, 0, -90)
     };
     private static final Path FOURTH_CURVE_PATH = new Path(FOURTH_CURVE_WAYPOINTS, true,
     DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
     private static final Point[] FIFTH_CURVE_WAYPOINTS = {
-        new Point(0, 0, 180),
-        new Point(10, 0, 180),
-        new Point(0, 120, 90)
+        //THIS POINT IS THE SOURCE OF OUR PROBLEMS--> new Point(0, 0, 180),
+        new Point(5, 0, 180),
+        new Point(0, 120, 90) //EXPERIMENT THE X COORDINATE ON THIS ONE
     };
     private static final Path FIFTH_CURVE_PATH = new Path(FIFTH_CURVE_WAYPOINTS, false,
     DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);

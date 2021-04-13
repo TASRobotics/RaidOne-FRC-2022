@@ -26,14 +26,14 @@ public class BouncePathSequence extends AutoSequence {
         new Point(0, 40),
         new Point(-30, 95), //(-15, 100)
         new Point(-60, 120, 180),
-        new Point(-105, 120, 180) //(-60, 200, 180)
+        new Point(-103, 120, 180) //(-60, 200, 180)
     };
     private static final Path SECOND_CURVE_PATH = new Path(SECOND_CURVE_WAYPOINTS, true,
     DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
     private static final Point[] THIRD_CURVE_WAYPOINTS = {
         new Point(0, 0, 180),//(-110, 100)
-        new Point(-10, 120, 90) //A6 -- (-135, 0, -90)
+        new Point(-5, 120, 90) //A6 -- (-135, 0, -90)
     };
     private static final Path THIRD_CURVE_PATH = new Path(THIRD_CURVE_WAYPOINTS, false,
     DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
@@ -41,23 +41,24 @@ public class BouncePathSequence extends AutoSequence {
     private static final Point[] FOURTH_CURVE_WAYPOINTS = {
         new Point(0, 0, 90),//(-110, 100)
         new Point(-40, 110, 180), 
-        new Point(-120, 110, 180) //A6 -- (-135, 0, -90)
+        new Point(-105, 110, 180) //A6 -- (-135, 0, -90)
     };
     private static final Path FOURTH_CURVE_PATH = new Path(FOURTH_CURVE_WAYPOINTS, true,
     DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
     private static final Point[] FIFTH_CURVE_WAYPOINTS = {
         //THIS POINT IS THE SOURCE OF OUR PROBLEMS--> new Point(0, 0, 180),
-        new Point(15, 0, 180),
-        new Point(20, 120, 115) //EXPERIMENT THE X COORDINATE ON THIS ONE
+        new Point(7, 0, 180),
+        new Point(-3, 60),
+        new Point(-3, 120, 90) //EXPERIMENT THE X COORDINATE ON THIS ONE
     };
     private static final Path FIFTH_CURVE_PATH = new Path(FIFTH_CURVE_WAYPOINTS, false,
     DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
 
     private static final Point[] SIXTH_CURVE_WAYPOINTS = {
         new Point(0, 0, 90),
-        //new Point(-35, 65),
-        new Point(-40, 30, 180) //(-50, 65, 180)
+        new Point(0, 45),
+        new Point(-40, 50, 180) //(-50, 65, 180)
     };
     private static final Path SIXTH_CURVE_PATH = new Path(SIXTH_CURVE_WAYPOINTS, true,
     DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);

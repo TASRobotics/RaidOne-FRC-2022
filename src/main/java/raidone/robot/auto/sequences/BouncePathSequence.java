@@ -12,13 +12,7 @@ import raidone.robot.submodules.Intake;
 import raidone.robot.submodules.Shooter;
 
 public class BouncePathSequence extends AutoSequence {
-    //private static final Point[] TEST_CURVE_WAYPOINTS = {
-        //new Point(0, 0, 0),
-        //new Point(60, 0, 0)
-    //};
-    //private static final Path TEST_CURVE_PATH = new Path(TEST_CURVE_WAYPOINTS, true,
-        //DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
-
+    
     private static final Point[] FIRST_CURVE_WAYPOINTS = {
         new Point(10, 0, 0),
         new Point(30, 0),

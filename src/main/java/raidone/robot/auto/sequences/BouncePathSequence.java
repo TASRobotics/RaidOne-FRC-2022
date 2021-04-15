@@ -13,13 +13,15 @@ import raidone.robot.submodules.Shooter;
 
 public class BouncePathSequence extends AutoSequence {
     
+// Velocity variable in constants file --> DriveConstants.DEFAULT_CRUISE_VELOCITY
+
     private static final Point[] FIRST_CURVE_WAYPOINTS = {
         new Point(10, 0, 0),
         new Point(30, 0),
         new Point(50, 60, 90) //A3 -- (50, 100, 90)
     };
     private static final Path FIRST_CURVE_PATH = new Path(FIRST_CURVE_WAYPOINTS, false,
-        DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
+        2.5, 4);
 
     private static final Point[] SECOND_CURVE_WAYPOINTS = {
         new Point(0, 0, 90), //comments are old points for reference purposes
@@ -29,14 +31,14 @@ public class BouncePathSequence extends AutoSequence {
         new Point(-103, 120, 180) //(-60, 200, 180)
     };
     private static final Path SECOND_CURVE_PATH = new Path(SECOND_CURVE_WAYPOINTS, true,
-    DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
+    2.5, 4);
 
     private static final Point[] THIRD_CURVE_WAYPOINTS = {
         new Point(0, 0, 180),//(-110, 100)
         new Point(-5, 120, 90) //A6 -- (-135, 0, -90)
     };
     private static final Path THIRD_CURVE_PATH = new Path(THIRD_CURVE_WAYPOINTS, false,
-    DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
+    2.5, 4);
 
     private static final Point[] FOURTH_CURVE_WAYPOINTS = {
         new Point(0, 0, 90),//(-110, 100)
@@ -44,7 +46,7 @@ public class BouncePathSequence extends AutoSequence {
         new Point(-105, 110, 180) //A6 -- (-135, 0, -90)
     };
     private static final Path FOURTH_CURVE_PATH = new Path(FOURTH_CURVE_WAYPOINTS, true,
-    DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
+    2.5, 4);
 
     private static final Point[] FIFTH_CURVE_WAYPOINTS = {
         //THIS POINT IS THE SOURCE OF OUR PROBLEMS--> new Point(0, 0, 180),
@@ -53,7 +55,7 @@ public class BouncePathSequence extends AutoSequence {
         new Point(-3, 120, 90) //EXPERIMENT THE X COORDINATE ON THIS ONE
     };
     private static final Path FIFTH_CURVE_PATH = new Path(FIFTH_CURVE_WAYPOINTS, false,
-    DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
+    2.5, 4);
 
     private static final Point[] SIXTH_CURVE_WAYPOINTS = {
         new Point(0, 0, 90),
@@ -61,7 +63,7 @@ public class BouncePathSequence extends AutoSequence {
         new Point(-40, 50, 180) //(-50, 65, 180)
     };
     private static final Path SIXTH_CURVE_PATH = new Path(SIXTH_CURVE_WAYPOINTS, true,
-    DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);
+    2.5, 4);
  
     // test
     

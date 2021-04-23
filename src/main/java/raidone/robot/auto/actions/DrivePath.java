@@ -1,6 +1,5 @@
 package raidone.robot.auto.actions;
 
-import raidone.robot.Constants.DriveConstants;
 import raidone.robot.pathing.Path;
 import raidone.robot.submodules.Drive;
 

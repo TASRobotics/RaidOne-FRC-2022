@@ -2,15 +2,12 @@ package raidone.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import raidone.robot.auto.AutoRunner;
-import raidone.robot.dashboard.Tab;
 import raidone.robot.teleop.Teleop;
 import raidone.robot.submodules.Drive;
 import raidone.robot.submodules.Limelight;
 import raidone.robot.submodules.Shooter;
 import raidone.robot.submodules.Throat;
-import raidone.robot.submodules.Submodule;
 import raidone.robot.submodules.SubmoduleManager;
 import raidone.robot.submodules.Intake;
 

@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import raidone.robot.Constants.DriveConstants;
 import raidone.robot.Constants.IntakeConstants;
-import raidone.robot.Constants.ThroatConstants;
 import raidone.robot.auto.actions.DebugLimelightDistance;
 import raidone.robot.dashboard.Tab;
 import raidone.robot.submodules.Drive;
@@ -16,7 +15,6 @@ import raidone.robot.submodules.Throat;
 import raidone.robot.submodules.Intake;
 import raidone.robot.submodules.Drive.GearShift;
 import raidone.robot.utils.JoystickUtils;
-import raidone.robot.wrappers.InactiveCompressor;
 
 public class Teleop {
 
@@ -54,7 +52,6 @@ public class Teleop {
     private static Shooter shooter = Shooter.getInstance();
     private static Intake intake = Intake.getInstance();
     private static Throat throat = Throat.getInstance();
-    private static InactiveCompressor compressor = InactiveCompressor.getInstance();
 
     private XboxController controller = new XboxController(0);
 
@@ -195,10 +192,6 @@ public class Teleop {
         } else if (controller.getBumperReleased(Hand.kLeft)) {
             throat.loopBalls(0);
         }
-
-    }
-
-    private void p2Loop() {
 
     }
 }

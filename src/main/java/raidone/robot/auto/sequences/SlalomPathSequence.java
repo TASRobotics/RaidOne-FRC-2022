@@ -7,15 +7,12 @@ import raidone.pathgen.Point;
 import raidone.robot.Constants.DriveConstants;
 import raidone.robot.auto.actions.*;
 import raidone.robot.pathing.Path;
-import raidone.robot.submodules.Drive;
-import raidone.robot.submodules.Intake;
-import raidone.robot.submodules.Shooter;
 
 public class SlalomPathSequence extends AutoSequence {
 
     private static final Point[] FIRST_CURVE_WAYPOINTS = {
         new Point(0, 0, 0),
-        new Point(45, 0),
+        new Point(55, 0),
         new Point(50, 75),
         new Point(90, 75),
         new Point(150, 75, 0)
@@ -26,7 +23,7 @@ public class SlalomPathSequence extends AutoSequence {
     private static final Point[] SECOND_CURVE_WAYPOINTS = {
         new Point(0, 0, 0),
         new Point(42, 0),
-        new Point(83, -50),
+        new Point(70, -53),
         new Point(118, -80, 0)
     };
     private static final Path SECOND_CURVE_PATH = new Path(SECOND_CURVE_WAYPOINTS, false,
@@ -59,8 +56,9 @@ public class SlalomPathSequence extends AutoSequence {
         
     private static final Point[] SIXTH_CURVE_WAYPOINTS = {
         new Point(0, 0, -180),
-        new Point(-30, 60, -270),
-        new Point(-40, 92, -225)
+        new Point(-5, 70, -270),
+        // new Point(-30, 82, 90),
+        new Point(-40, 96, -225)
     };
     private static final Path SIXTH_CURVE_PATH = new Path(SIXTH_CURVE_WAYPOINTS, false,
         DriveConstants.DEFAULT_CRUISE_VELOCITY, DriveConstants.DEFAULT_TARGET_ACCELERATION);

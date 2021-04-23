@@ -1,7 +1,5 @@
 package raidone.robot.submodules;
 
-import java.util.Map;
-
 import com.ctre.phoenix.motion.SetValueMotionProfile;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -10,9 +8,7 @@ import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
-import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
-import com.ctre.phoenix.motorcontrol.can.VictorSPXConfiguration;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.ctre.phoenix.sensors.PigeonIMU_StatusFrame;
 
@@ -160,18 +156,6 @@ public class Drive extends Submodule {
      * @param inversion whether to invert the motor output
      */
     private void configureMotor(LazyTalonSRX motor, InvertType inversion) {
-        motor.configFactoryDefault();
-        motor.setNeutralMode(NeutralMode.Coast);
-        motor.setInverted(inversion);
-    }
-
-    /**
-     * Configures a motor controller.
-     * 
-     * @param motor     the motor controller to configure
-     * @param inversion whether to invert the motor output
-     */
-    private void configureMotor(LazyTalonFX motor, InvertType inversion) {
         motor.configFactoryDefault();
         motor.setNeutralMode(NeutralMode.Coast);
         motor.setInverted(inversion);

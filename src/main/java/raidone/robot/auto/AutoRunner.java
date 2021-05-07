@@ -3,6 +3,7 @@ package raidone.robot.auto;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import raidone.robot.auto.sequences.*;
+import raidone.robot.auto.sequences.SlalomPathSequence;
 import raidone.robot.dashboard.Tab;
 import raidone.robot.submodules.Drive;
 
@@ -18,7 +19,7 @@ public class AutoRunner {
 
     private AutoSequence[] availableSequences = { //list out sequences
         new TestSequence(),
-        new StealCellSequence(),
+        //new StealCellSequence(),
         new SlalomPathSequence(),
         new BouncePathSequence(),
         new BarrelPathSequence()

@@ -8,8 +8,6 @@ import raidone.robot.auto.actions.*;
 import raidone.robot.pathing.Path;
 
 public class BouncePathSequence extends AutoSequence {
-    
-// Velocity variable in constants file --> DriveConstants.DEFAULT_CRUISE_VELOCITY
 
     private static final Point[] FIRST_CURVE_WAYPOINTS = {
         new Point(10, 0, 0),
@@ -20,35 +18,34 @@ public class BouncePathSequence extends AutoSequence {
         2.5, 4);
 
     private static final Point[] SECOND_CURVE_WAYPOINTS = {
-        new Point(0, 0, 90), //comments are old points for reference purposes
+        new Point(0, 0, 90), 
         new Point(0, 40),
-        new Point(-30, 95), //(-15, 100)
+        new Point(-30, 95), 
         new Point(-60, 120, 180),
-        new Point(-103, 120, 180) //(-60, 200, 180)
+        new Point(-103, 120, 180) 
     };
     private static final Path SECOND_CURVE_PATH = new Path(SECOND_CURVE_WAYPOINTS, true,
     2.5, 4);
 
     private static final Point[] THIRD_CURVE_WAYPOINTS = {
-        new Point(0, 0, 180),//(-110, 100)
-        new Point(-5, 120, 90) //A6 -- (-135, 0, -90)
+        new Point(0, 0, 180),
+        new Point(-5, 120, 90) 
     };
     private static final Path THIRD_CURVE_PATH = new Path(THIRD_CURVE_WAYPOINTS, false,
     2.5, 4);
 
     private static final Point[] FOURTH_CURVE_WAYPOINTS = {
-        new Point(0, 0, 90),//(-110, 100)
+        new Point(0, 0, 90),
         new Point(-40, 110, 180), 
-        new Point(-105, 110, 180) //A6 -- (-135, 0, -90)
+        new Point(-105, 110, 180) 
     };
     private static final Path FOURTH_CURVE_PATH = new Path(FOURTH_CURVE_WAYPOINTS, true,
     2.5, 4);
 
     private static final Point[] FIFTH_CURVE_WAYPOINTS = {
-        //THIS POINT IS THE SOURCE OF OUR PROBLEMS--> new Point(0, 0, 180),
         new Point(7, 0, 180),
         new Point(-3, 60),
-        new Point(-3, 120, 90) //EXPERIMENT THE X COORDINATE ON THIS ONE
+        new Point(-3, 120, 90) 
     };
     private static final Path FIFTH_CURVE_PATH = new Path(FIFTH_CURVE_WAYPOINTS, false,
     2.5, 4);
@@ -56,12 +53,10 @@ public class BouncePathSequence extends AutoSequence {
     private static final Point[] SIXTH_CURVE_WAYPOINTS = {
         new Point(0, 0, 90),
         new Point(0, 45),
-        new Point(-40, 50, 180) //(-50, 65, 180)
+        new Point(-40, 50, 180) 
     };
     private static final Path SIXTH_CURVE_PATH = new Path(SIXTH_CURVE_WAYPOINTS, true,
     2.5, 4);
- 
-    // test
     
     public BouncePathSequence() {
         System.out.println(DriverStation.getInstance().getAlliance().name());
@@ -71,11 +66,6 @@ public class BouncePathSequence extends AutoSequence {
     public void sequence() {
         addAction(new SeriesAction(
             Arrays.asList(
-                // new ParallelAction(
-                //     Arrays.asList(
-                //         new DrivePath(TEST_CURVE_PATH)
-                //     )
-                // )
                 new ParallelAction(
                     Arrays.asList(
                         new DrivePath(FIRST_CURVE_PATH)

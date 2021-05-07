@@ -11,13 +11,11 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import raidone.robot.Constants.DriveConstants;
 import raidone.robot.Constants.IntakeConstants;
-import raidone.robot.auto.actions.DebugLimelightDistance;
 import raidone.robot.Robot;
 // import raidone.robot.auto.actions.DebugLimelightDistance;
 import raidone.robot.dashboard.Tab;
 import raidone.robot.submodules.Angler;
 import raidone.robot.submodules.Drive;
-import raidone.robot.submodules.Shooter;
 import raidone.robot.submodules.Throat;
 import raidone.robot.submodules.Intake;
 import raidone.robot.submodules.Drive.GearShift;
@@ -58,10 +56,6 @@ public class Teleop {
     }
 
     private static Drive drive = Drive.getInstance();
-    private static Shooter shooter = Shooter.getInstance();
-    private static Intake intake = Intake.getInstance();
-    private static Throat throat = Throat.getInstance();
-
     private XboxController controller = new XboxController(0);
 
     // private DebugLimelightDistance debugDistance = new DebugLimelightDistance();
@@ -80,7 +74,7 @@ public class Teleop {
         drive.setGearShift(GearShift.LOW);
         drive.setBrakeMode(true);
 
-        debugDistance.start();
+        //debugDistance.start();
     }
 
     /**

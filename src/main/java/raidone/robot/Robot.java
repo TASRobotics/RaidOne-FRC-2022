@@ -8,8 +8,16 @@ import raidone.robot.submodules.Drive;
 import raidone.robot.submodules.Limelight;
 import raidone.robot.submodules.Shooter;
 import raidone.robot.submodules.Throat;
+import raidone.robot.submodules.Submodule;
 import raidone.robot.submodules.SubmoduleManager;
+
+import raidone.robot.submodules.Drive;
+import raidone.robot.submodules.Angler;
+import raidone.robot.submodules.Flywheel;
 import raidone.robot.submodules.Intake;
+import raidone.robot.submodules.Limelight;
+import raidone.robot.submodules.Throat;
+import raidone.robot.submodules.Turret;
 
 /**
  * The main robot class.
@@ -21,10 +29,13 @@ public class Robot extends TimedRobot {
     private static final Teleop teleop = Teleop.getInstance();
 
     private static final Drive moduleDrive = Drive.getInstance();
-    private static final Limelight moduleLimelight = Limelight.getInstance();
-    private static final Shooter moduleShooter = Shooter.getInstance();
-    private static final Intake moduleIntake = Intake.getInstance();
-    private static final Throat moduleThroat = Throat.getInstance();
+    // private static final Limelight moduleLimelight = Limelight.getInstance();
+    // private static final Shooter moduleShooter = Shooter.getInstance();
+    // private static final Intake moduleIntake = Intake.getInstance();
+    // private static final Throat moduleThroat = Throat.getInstance();
+    public static final Flywheel flywheel = new Flywheel(0.5, 0.00006, 0.0005);
+    public static final Turret turret = new Turret(0.0367, 0.106);//0.15
+    public static final Throat throat = new Throat();
 
     private AutoRunner autoRunner;
 
@@ -35,11 +46,11 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         // Register all submodules here
         submoduleManager.setSubmodules(
-            moduleDrive,
-            moduleShooter,
-            moduleIntake,
-            moduleLimelight,
-            moduleThroat
+            moduleDrive
+            // moduleShooter,
+            // moduleIntake,
+            // moduleLimelight,
+            // moduleThroat
         );
         submoduleManager.onInit();
 

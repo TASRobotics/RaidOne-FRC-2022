@@ -1,19 +1,28 @@
 package raidone.robot.teleop;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.revrobotics.CANSparkMax.IdleMode;
+
+import edu.wpi.first.hal.SimDevice.Direction;
 import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import raidone.robot.Constants.DriveConstants;
 import raidone.robot.Constants.IntakeConstants;
 import raidone.robot.auto.actions.DebugLimelightDistance;
+import raidone.robot.Robot;
+// import raidone.robot.auto.actions.DebugLimelightDistance;
 import raidone.robot.dashboard.Tab;
+import raidone.robot.submodules.Angler;
 import raidone.robot.submodules.Drive;
 import raidone.robot.submodules.Shooter;
 import raidone.robot.submodules.Throat;
 import raidone.robot.submodules.Intake;
 import raidone.robot.submodules.Drive.GearShift;
+import raidone.robot.submodules.Turret;
+import raidone.robot.submodules.Flywheel;
 import raidone.robot.utils.JoystickUtils;
 
 public class Teleop {
@@ -55,7 +64,7 @@ public class Teleop {
 
     private XboxController controller = new XboxController(0);
 
-    private DebugLimelightDistance debugDistance = new DebugLimelightDistance();
+    // private DebugLimelightDistance debugDistance = new DebugLimelightDistance();
 
     private DriveMode driveMode = DriveMode.TANK;
 
@@ -82,7 +91,7 @@ public class Teleop {
         p1Loop();
         // p2Loop();
 
-        debugDistance.update();
+        // debugDistance.update();
     }
 
     private void p1Loop() {
@@ -121,7 +130,7 @@ public class Teleop {
                 // Change
                 // quick
                 // turn
-                );
+                );  
                 break;
         }
 
@@ -132,66 +141,57 @@ public class Teleop {
             drive.setBrakeMode(false);
         }
 
-        if (controller.getXButtonPressed()) {
-            drive.zero();
+        if(controller.getXButton()){
+            Intake.set(0.4);
+        }
+        else {
+            Intake.set(0);
         }
 
         //
         // WITHOUT HYPERSHIFT
         //
-        if (!controller.getBumper(Hand.kRight)) {
+        // if (!controller.getBumper(Hand.kRight)) {
 
-            /**
-             * Intake
-             */
-            // Run intake in
-            intake.intakeBalls(JoystickUtils
-                    .deadband(IntakeConstants.CONTROL_SCALING_FACTOR * (controller.getTriggerAxis(Hand.kLeft))));
-
-            /**
-             * Throat
-             */
-            // Loop up throat
-            if (controller.getBumperPressed(Hand.kLeft)) {
-                throat.loopBalls(70);
-            } else if (controller.getBumperReleased(Hand.kLeft)) {
-                throat.loopBalls(0);
+            if(controller.getBumperPressed(Hand.kLeft)){
+                Throat.set(0.5);
+            } else {
+                Throat.index();
             }
 
-            /**
-             * Shooter
-             */
-            if (controller.getYButtonPressed()) {
-                shooter.shoot(1.0, false);
-            } else if (controller.getYButtonReleased()) {
-                shooter.shoot(0.0, false);
+            if (controller.getBumper(Hand.kRight)){
+                Robot.flywheel.setVel(0.8);
+                Robot.turret.aim(Turret.Direction.RIGHT);
+            } else if(controller.getYButtonPressed()){
+                Robot.turret.set(1);
             }
+            else {
+                Robot.turret.resetPID();
+                Robot.turret.set(0);
+                Robot.flywheel.set(0);
+            }
+            Angler.setPower(controller.getTriggerAxis(Hand.kLeft) - controller.getTriggerAxis(Hand.kRight));
+        // }
 
-
-            shooter.shoot((JoystickUtils.deadband(controller.getTriggerAxis(Hand.kRight))), false);
-
-            return;
-        }
-
-        //
+        //  
         // WITH HYPERSHIFT
         //
         /**
          * Intake
          */
-        // Run intake out
-        intake.intakeBalls(JoystickUtils
-                .deadband(IntakeConstants.CONTROL_SCALING_FACTOR * (-controller.getTriggerAxis(Hand.kLeft))));
+        //Run intake out
+        // intake.intakeBalls(JoystickUtils
+        //         .deadband(IntakeConstants.CONTROL_SCALING_FACTOR * (-controller.getTriggerAxis(Hand.kLeft))));
 
         /**
          * Throat
          */
         // Loop down throat
-        if (controller.getBumperPressed(Hand.kLeft)) {
-            throat.loopBalls(-70);
-        } else if (controller.getBumperReleased(Hand.kLeft)) {
-            throat.loopBalls(0);
-        }
+        // if (controller.getBumperPressed(Hand.kLeft)) {
+        //     throat.loopBalls(-70);
+        // } else if (controller.getBumperReleased(Hand.kLeft)) {
+        //     throat.loopBalls(0);
+        // }
 
     }
 }

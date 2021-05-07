@@ -1,7 +1,7 @@
 package raidone.robot.auto.actions;
 
 import raidone.robot.Constants.ShooterConstants;
-import raidone.robot.submodules.Shooter;
+// import raidone.robot.submodules.Shooter;
 import raidone.robot.utils.TimerBoolean;
 
 /**
@@ -11,7 +11,7 @@ import raidone.robot.utils.TimerBoolean;
  */
 public class SetShooterVelocity implements Action {
 
-    private static final Shooter shooter = Shooter.getInstance();
+    // private static final Shooter shooter = Shooter.getInstance();
 
     private double percentSpeed = 0.0;
 
@@ -36,12 +36,12 @@ public class SetShooterVelocity implements Action {
         System.out.println("[Auto] Action '" + getClass().getSimpleName() + "' started!");
 
         isUpToSpeed.reset();
-        shooter.shoot(percentSpeed, false);
+        // shooter.shoot(percentSpeed, false);
     }
 
     @Override
     public void update() {
-        isUpToSpeed.update(shooter.isUpToSpeed());
+        // isUpToSpeed.update(shooter.isUpToSpeed());
     }
 
     @Override

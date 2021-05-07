@@ -1,7 +1,6 @@
 package raidone.robot.auto.actions;
 
 import raidone.robot.Constants.ShooterConstants;
-// import raidone.robot.submodules.Shooter;
 import raidone.robot.utils.TimerBoolean;
 
 /**

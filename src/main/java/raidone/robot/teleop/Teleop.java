@@ -1,5 +1,8 @@
 package raidone.robot.teleop;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.revrobotics.CANSparkMax.IdleMode;
+
 import edu.wpi.first.hal.SimDevice.Direction;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
@@ -73,7 +76,6 @@ public class Teleop {
     public void onStart() {
         drive.stop();
         drive.setGearShift(GearShift.LOW);
-
         // debugDistance.start();
     }
 

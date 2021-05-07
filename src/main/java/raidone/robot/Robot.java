@@ -5,10 +5,7 @@ import edu.wpi.first.wpilibj.Timer;
 import raidone.robot.auto.AutoRunner;
 import raidone.robot.teleop.Teleop;
 import raidone.robot.submodules.Drive;
-import raidone.robot.submodules.Submodule;
 import raidone.robot.submodules.SubmoduleManager;
-
-import raidone.robot.submodules.Drive;
 import raidone.robot.submodules.Flywheel;
 import raidone.robot.submodules.Throat;
 import raidone.robot.submodules.Turret;

@@ -45,7 +45,6 @@ public class Throat {
     //CONSTANTS
     public static final double BALL_DETECTED_VALUE = 80.0;
 
-    //HELPER FUNCTIONS
     public static void set(double percent){
         _throatright.set(percent);
     }
@@ -69,7 +68,7 @@ public class Throat {
     }
 
     public static void index(){
-        if(_throatSensor.getRange() < BALL_DETECTED_VALUE){ //idk, tune or smth
+        if(_throatSensor.getRange() < BALL_DETECTED_VALUE){ 
             set(0);
         } else {
             set(0.16);

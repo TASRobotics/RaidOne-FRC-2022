@@ -143,6 +143,7 @@ public class Constants {
         public static final int THROAT_REVERSE_ID = 5;
 
         public static final double CONTROL_SCALING_FACTOR = 1.0;
+        public static final double BALL_DETECTED_VALUE = 80.0;
     }
 
     /**
@@ -194,4 +195,14 @@ public class Constants {
     public static final double JOYSTICK_DEADBAND = 0.05;
 
     public static final int TIMEOUT_MS = 10;
+
+    /**
+     * Turret Constants
+     */
+    public static final class TurretConstants{
+        public static final double TURRET_KP = 0.0367;
+        public static final double TURRET_KD = 0.106;
+
+    }
+
 }

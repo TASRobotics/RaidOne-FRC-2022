@@ -3,6 +3,8 @@ package raidone.robot.submodules;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import jdk.jfr.Percentage;
 
+import raidone.robot.Constants.ThroatConstants;
+
 //Talon FX
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.revrobotics.CANEncoder;
@@ -40,10 +42,7 @@ public class Throat {
         _throatright.configAllSettings(config);
         _throatleft.setInverted(InvertType.InvertMotorOutput);
         _throatleft.follow(_throatright, FollowerType.PercentOutput);
-    }
-    
-    //CONSTANTS
-    public static final double BALL_DETECTED_VALUE = 80.0;
+    }    
 
     public static void set(double percent){
         _throatright.set(percent);
@@ -68,7 +67,7 @@ public class Throat {
     }
 
     public static void index(){
-        if(_throatSensor.getRange() < BALL_DETECTED_VALUE){ 
+        if(_throatSensor.getRange() < ThroatConstants.BALL_DETECTED_VALUE){ 
             set(0);
         } else {
             set(0.16);

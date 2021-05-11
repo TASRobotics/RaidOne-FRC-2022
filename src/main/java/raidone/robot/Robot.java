@@ -3,6 +3,7 @@ package raidone.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import raidone.robot.auto.AutoRunner;
+import raidone.robot.Constants.*;
 import raidone.robot.teleop.Teleop;
 import raidone.robot.submodules.Drive;
 import raidone.robot.submodules.SubmoduleManager;
@@ -23,7 +24,7 @@ public class Robot extends TimedRobot {
 
     private static final Drive moduleDrive = Drive.getInstance();
     public static final Flywheel flywheel = new Flywheel(0.5, 0.00006, 0.0005);
-    public static final Turret turret = new Turret(0.0367, 0.106);//0.15
+    public static final Turret turret = new Turret(TurretConstants.TURRET_KP, TurretConstants.TURRET_KD);//0.15
     public static final Throat throat = new Throat();
 
     private AutoRunner autoRunner;

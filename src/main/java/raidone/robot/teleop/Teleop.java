@@ -11,13 +11,13 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import raidone.robot.Constants.DriveConstants;
 import raidone.robot.Constants.IntakeConstants;
+import raidone.robot.Constants.FlywheelConstants;
 import raidone.robot.Robot;
-// import raidone.robot.auto.actions.DebugLimelightDistance;
 import raidone.robot.dashboard.Tab;
 import raidone.robot.submodules.Angler;
 import raidone.robot.submodules.Drive;
 import raidone.robot.submodules.Throat;
-import raidone.robot.submodules.Intake;
+// import raidone.robot.submodules.Intake;
 import raidone.robot.submodules.Drive.GearShift;
 import raidone.robot.submodules.Turret;
 import raidone.robot.submodules.Flywheel;
@@ -58,8 +58,6 @@ public class Teleop {
     private static Drive drive = Drive.getInstance();
     private XboxController controller = new XboxController(0);
 
-    // private DebugLimelightDistance debugDistance = new DebugLimelightDistance();
-
     private DriveMode driveMode = DriveMode.TANK;
 
     private NetworkTableEntry driveModeEntry = Shuffleboard.getTab(Tab.MAIN).add("Drive Mode", driveMode.toString())
@@ -73,26 +71,16 @@ public class Teleop {
         drive.stop();
         drive.setGearShift(GearShift.LOW);
         drive.setBrakeMode(true);
-
-        //debugDistance.start();
     }
 
     /**
      * Continuously loops in teleop.
      */
     public void onLoop() {
-
         p1Loop();
-        // p2Loop();
-
-        // debugDistance.update();
     }
 
     private void p1Loop() {
-        //
-        // REGARDLESS OF HYPERSHIFT
-        //
-        // Reversing analog to digital
         boolean reverse = JoystickUtils.deadband(controller.getTriggerAxis(Hand.kRight)) != 0;
 
         /**
@@ -120,10 +108,7 @@ public class Teleop {
             case CURVATURE:
                 double xSpeed = JoystickUtils.deadband(-controller.getY(Hand.kLeft));
                 drive.curvatureDrive(xSpeed, JoystickUtils.deadband(controller.getX(Hand.kRight)),
-                        Math.abs(xSpeed) < 0.1 // TODO:
-                // Change
-                // quick
-                // turn
+                        Math.abs(xSpeed) < 0.1
                 );  
                 break;
         }
@@ -136,56 +121,29 @@ public class Teleop {
         }
 
         if(controller.getXButton()){
-            Intake.set(0.4);
+            Robot.intake.set(0.4);
         }
         else {
-            Intake.set(0);
+            Robot.intake.set(0);
         }
 
-        //
-        // WITHOUT HYPERSHIFT
-        //
-        // if (!controller.getBumper(Hand.kRight)) {
+        if(controller.getBumperPressed(Hand.kLeft)){
+            Throat.set(0.5);
+        } else {
+            Throat.index();
+        }
 
-            if(controller.getBumperPressed(Hand.kLeft)){
-                Throat.set(0.5);
-            } else {
-                Throat.index();
-            }
-
-            if (controller.getBumper(Hand.kRight)){
-                Robot.flywheel.setVel(0.8);
-                Robot.turret.aim(Turret.Direction.RIGHT);
-            } else if(controller.getYButtonPressed()){
-                Robot.turret.set(1);
-            }
-            else {
-                Robot.turret.resetPID();
-                Robot.turret.set(0);
-                Robot.flywheel.set(0);
-            }
-            Angler.setPower(controller.getTriggerAxis(Hand.kLeft) - controller.getTriggerAxis(Hand.kRight));
-        // }
-
-        //  
-        // WITH HYPERSHIFT
-        //
-        /**
-         * Intake
-         */
-        //Run intake out
-        // intake.intakeBalls(JoystickUtils
-        //         .deadband(IntakeConstants.CONTROL_SCALING_FACTOR * (-controller.getTriggerAxis(Hand.kLeft))));
-
-        /**
-         * Throat
-         */
-        // Loop down throat
-        // if (controller.getBumperPressed(Hand.kLeft)) {
-        //     throat.loopBalls(-70);
-        // } else if (controller.getBumperReleased(Hand.kLeft)) {
-        //     throat.loopBalls(0);
-        // }
-
+        if (controller.getBumper(Hand.kRight)){
+            Robot.flywheel.setVel(0.8);
+            Robot.turret.aim(Turret.Direction.RIGHT);
+        } else if(controller.getYButtonPressed()){
+            Robot.turret.set(1);
+        }
+        else {
+            Robot.turret.resetPID();
+            Robot.turret.set(0);
+            Robot.flywheel.set(0);
+        }
+        Robot.angler.setPower(controller.getTriggerAxis(Hand.kLeft) - controller.getTriggerAxis(Hand.kRight));
     }
 }

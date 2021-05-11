@@ -22,8 +22,9 @@ import com.playingwithfusion.TimeOfFlight;
 
 public class Throat {
     //THROAT MOTORS
-    public static final WPI_TalonFX _throatright = new WPI_TalonFX(21);
-    public static final WPI_TalonFX _throatleft = new WPI_TalonFX(22);
+    // Right: 21, Left: 22
+    public static WPI_TalonFX _throatright;
+    public static WPI_TalonFX _throatleft;
     public static final TalonFXConfiguration config = new TalonFXConfiguration();
 
     //THROAT SENSOR(S)
@@ -38,7 +39,9 @@ public class Throat {
     }
 
      //Constructor 
-    public Throat(){
+    public Throat(int throatRightId, int throatLeftId){
+        _throatright = new WPI_TalonFX(throatRightId);
+        _throatleft = new WPI_TalonFX(throatLeftId);
         _throatright.configAllSettings(config);
         _throatleft.setInverted(InvertType.InvertMotorOutput);
         _throatleft.follow(_throatright, FollowerType.PercentOutput);

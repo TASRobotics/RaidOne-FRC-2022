@@ -2,16 +2,23 @@ package raidone.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import raidone.robot.auto.AutoRunner;
-import raidone.robot.Constants.*;
+import raidone.robot.dashboard.Tab;
 import raidone.robot.teleop.Teleop;
-import raidone.robot.submodules.Drive;
+import raidone.robot.submodules.Submodule;
 import raidone.robot.submodules.SubmoduleManager;
+
+import raidone.robot.submodules.Drive;
+import raidone.robot.submodules.Angler;
 import raidone.robot.submodules.Flywheel;
+import raidone.robot.submodules.Intake;
+import raidone.robot.submodules.Limelight;
 import raidone.robot.submodules.Throat;
 import raidone.robot.submodules.Turret;
-// import raidone.robot.submodules.Limelight;
-// import raidone.robot.submodules.Intake;
+
+import raidone.robot.Constants.FlywheelConstants;
+import raidone.robot.Constants.TurretConstants;
 
 /**
  * The main robot class.
@@ -19,13 +26,14 @@ import raidone.robot.submodules.Turret;
 public class Robot extends TimedRobot {
 
     private static final SubmoduleManager submoduleManager = SubmoduleManager.getInstance();
-
     private static final Teleop teleop = Teleop.getInstance();
-
     private static final Drive moduleDrive = Drive.getInstance();
-    public static final Flywheel flywheel = new Flywheel(0.5, 0.00006, 0.0005);
-    public static final Turret turret = new Turret(TurretConstants.TURRET_KP, TurretConstants.TURRET_KD);//0.15
-    public static final Throat throat = new Throat();
+    public static final Flywheel flywheel = new Flywheel(FlywheelConstants.MAIN_KP, FlywheelConstants.FLYWHEEL_KP, FlywheelConstants.FLYWHEEL_KD);
+    public static final Turret turret = new Turret(TurretConstants.TURRET_KP, TurretConstants.TURRET_KD);
+    public static final Throat throat = new Throat(21, 22);
+    public static final Intake intake = new Intake(31);
+    public static final Angler angler = new Angler(0, 1, 1, 0);
+
 
     private AutoRunner autoRunner;
 

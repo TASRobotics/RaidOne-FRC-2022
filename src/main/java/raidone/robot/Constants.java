@@ -199,10 +199,20 @@ public class Constants {
     /**
      * Turret Constants
      */
-    public static final class TurretConstants{
+    public static final class TurretConstants {
         public static final double TURRET_KP = 0.0367;
         public static final double TURRET_KD = 0.106;
-
     }
 
+    /**
+     *  FlyWgeel Constants
+     */
+    public static final class FlywheelConstants {
+        //CONSTANTS
+        public static final double KICKER_FREE_SPEED = 11000; //RPM
+        public static final double MAIN_FREE_SPEED = 6380.0; //RPM
+        public static final double MAIN_KP = 0.5;
+        public static final double FLYWHEEL_KP = 0.00006;
+        public static final double FLYWHEEL_KD = 0.0005;
+    }
 }

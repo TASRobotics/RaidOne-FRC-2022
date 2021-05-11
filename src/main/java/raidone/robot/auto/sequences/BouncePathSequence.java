@@ -12,7 +12,7 @@ public class BouncePathSequence extends AutoSequence {
     private static final Point[] FIRST_CURVE_WAYPOINTS = {
         new Point(10, 0, 0),
         new Point(30, 0),
-        new Point(50, 60, 90) //A3 -- (50, 100, 90)
+        new Point(50, 60, 90)
     };
     private static final Path FIRST_CURVE_PATH = new Path(FIRST_CURVE_WAYPOINTS, false,
         2.5, 4);

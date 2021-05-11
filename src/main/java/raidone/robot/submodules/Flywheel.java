@@ -17,6 +17,8 @@ import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 
+import raidone.robot.Constants.FlywheelConstants;
+
 public class Flywheel {
     //MAIN FLYWHEEL
     public static final WPI_TalonFX _shooterleft = new WPI_TalonFX(42);

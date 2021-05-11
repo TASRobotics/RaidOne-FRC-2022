@@ -29,10 +29,6 @@ public class Flywheel {
     public static final CANEncoder _kickerEncoder = _kickerright.getEncoder();
     public static final CANPIDController sparkmaxPID = _kickerright.getPIDController();
 
-    //CONSTANTS
-    public static final double KICKER_FREE_SPEED = 11000; //RPM
-    public static final double MAIN_FREE_SPEED = 6380.0; //RPM
-
     //GAINS (this is like the one thing that matters)
     private double main_kP, kicker_kP, kicker_kD, prevError, kicker_kF;
 

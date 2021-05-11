@@ -60,6 +60,6 @@ public class Limelight {
     }
 
     public static double getDistance(){
-        return (GOAL_HEIGHT - LIMELIGHT_HEIGHT) / Math.tan(LIMELIGHT_ANGLE + Math.toRadians(getY())); //wtf is the angle supposed to be
+        return (GOAL_HEIGHT - LIMELIGHT_HEIGHT) / Math.tan(LIMELIGHT_ANGLE + Math.toRadians(getY())); 
     }
 }

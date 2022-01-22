@@ -3,19 +3,26 @@ package raidone.robot.submodules;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import raidone.robot.Constants.ChassisConstants;
+import raidone.robot.Constants.AutoConstants;
+
 import raidone.robot.wrappers.InactiveCompressor;
 import raidone.robot.wrappers.InactiveDoubleSolenoid;
 
-public class Chassis extends SubsystemBase {
+public class Chassis extends Submodule {
     /** Enum controlling gear shift */
     public static enum GearShift {
         HIGH_TORQUE, LOW_TORQUE, OFF
@@ -44,12 +51,11 @@ public class Chassis extends SubsystemBase {
 
     private final WPI_PigeonIMU mImu = new WPI_PigeonIMU(ChassisConstants.IMU_ID);
 
-    private DifferentialDriveOdometry mOdometry;
-
     private final InactiveCompressor compressor = InactiveCompressor.getInstance();
     private final InactiveDoubleSolenoid shifter = new InactiveDoubleSolenoid(
         ChassisConstants.SHIFTER_HIGH_TORQUE_ID, 
         ChassisConstants.SHIFTER_LOW_TORQUE_ID);
+
 
     private static Chassis instance = null;
     public static Chassis getInstance() {
@@ -59,7 +65,7 @@ public class Chassis extends SubsystemBase {
         return instance;
     }
 
-    
+    @Override
     public void onInit() {
         // Inverts motors and encoders
         mRightMotors.setInverted(true);
@@ -68,21 +74,16 @@ public class Chassis extends SubsystemBase {
         // Reset encoders
         resetEncoders();
 
-        // Init odom
-        mOdometry = new DifferentialDriveOdometry(new Rotation2d(getHeading()));
-
         changeShifterState(GearShift.LOW_TORQUE);
     }
 
-    
+    @Override
     public void run() {
-        // Runs odometry in the background
-        mOdometry.update(
-            new Rotation2d(getHeading()), getLeftEncoderDistance(), getRightEncoderDistance());
+        
     }
 
     /** Stops the compressor and all chassis motors */
-    
+    @Override
     public void stop() {
         mChassis.stopMotor();
         compressor.changeState();
@@ -103,16 +104,16 @@ public class Chassis extends SubsystemBase {
         }
     }
 
-    public DifferentialDrive getDifferentialDrive() {
-        return mChassis;
-    }
+    // public DifferentialDrive getDifferentialDrive() {
+    //     return mChassis;
+    // }
 
     /**
      * Calculates distance travelled on the left side based on encoder readings
      * 
      * @return distance travelled
      */
-    private double getLeftEncoderDistance() {
+    public double getLeftEncoderDistance() {
         return mLeftLeader.getSelectedSensorPosition() * ChassisConstants.kEncoderDistancePerPulse;
     }
 
@@ -121,18 +122,11 @@ public class Chassis extends SubsystemBase {
      * 
      * @return distance travelled
      */
-    private double getRightEncoderDistance() {
+    public double getRightEncoderDistance() {
         return mRightLeader.getSelectedSensorPosition() * ChassisConstants.kEncoderDistancePerPulse;
     }
 
-    /**
-     * Returns the currently-estimated pose of the robot.
-     *
-     * @return The pose.
-     */
-    public Pose2d getPose() {
-        return mOdometry.getPoseMeters();
-    }
+    
 
     /**
      * Returns the current wheel speeds of the robot.
@@ -162,15 +156,7 @@ public class Chassis extends SubsystemBase {
         return mRightLeader.getSelectedSensorVelocity() * ChassisConstants.kEncoderDistancePerPulse * 10;
     }
 
-    /**
-     * Resets the odometry to the specified pose.
-     *
-     * @param pose The pose to which to set the odometry.
-     */
-    public void resetOdometry(Pose2d pose) {
-        resetEncoders();
-        mOdometry.resetPosition(pose, mImu.getRotation2d());
-    }
+    
 
     public void curvatureDrive(double throttle, double turn, boolean quickTurn) {
         mChassis.curvatureDrive(throttle, turn, quickTurn);
@@ -189,7 +175,7 @@ public class Chassis extends SubsystemBase {
     }
 
     /** Zeros all sensors */
-    
+    @Override
     public void zero() {
         resetEncoders();
         zeroHeading();
@@ -251,4 +237,6 @@ public class Chassis extends SubsystemBase {
     public double getTurnRate() {
         return -mImu.getRate();
     }
+
+
 }

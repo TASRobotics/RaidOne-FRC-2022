@@ -1,10 +1,11 @@
 package raidzero.robot.utils;
 
 import org.junit.*;
-import static org.junit.Assert.*;
 
-import raidzero.robot.utils.InterpolatingTreeMap;
-import raidzero.robot.utils.InterpolatingDouble;
+import raidone.robot.utils.InterpolatingDouble;
+import raidone.robot.utils.InterpolatingTreeMap;
+
+import static org.junit.Assert.*;
 
 public class InterpolatingTreeMapTester {
 

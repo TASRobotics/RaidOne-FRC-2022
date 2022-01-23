@@ -2,7 +2,6 @@ package raidone.robot.auto;
 
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import raidone.robot.auto.sequences.AutoSequence;
 import raidone.robot.auto.sequences.*;
 import raidone.robot.dashboard.Tab;
 
@@ -18,6 +17,7 @@ public class AutoRunner {
     // list of every sequence 
     private AutoSequence[] availableSequences = {
         // list of all available sequences
+        new TestSequence()
     };
 
     public AutoRunner() {

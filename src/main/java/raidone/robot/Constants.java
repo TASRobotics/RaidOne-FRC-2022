@@ -22,10 +22,19 @@ public final class Constants {
         public static final int SHIFTER_HIGH_TORQUE_ID = 0;
         public static final int SHIFTER_LOW_TORQUE_ID = 1;
 
-                
-        public static final double kTrackwidthMeters = 0.69;
-        public static final DifferentialDriveKinematics kDriveKinematics =
-            new DifferentialDriveKinematics(kTrackwidthMeters);
+        /** Velocity PID */
+        public static final int PID_LOOP_IDX = 0;
+        public static final double LEFT_kF = 0.0;
+        public static final double LEFT_kP = 0.0;
+        public static final double LEFT_kD = 0.0;
+        public static final double RIGHT_kF = 0.0;
+        public static final double RIGHT_kP = 0.0;
+        public static final double RIGHT_kD = 0.0;
+
+        
+        public static final double TRACK_WIDTH = 0.69;
+        public static final DifferentialDriveKinematics DRIVE_KINEMATICS =
+            new DifferentialDriveKinematics(TRACK_WIDTH);
         
         public static final int kEncoderCPR = 8129;
         public static final double kWheelDiameterMeters = 0.1524;
@@ -51,10 +60,11 @@ public final class Constants {
     }
 
     public static final class AutoConstants {
+        /** Motion profile constants */
         public static final double kMaxSpeedMetersPerSecond = 1.5;
         public static final double kMaxAccelerationMetersPerSecondSquared = 1.5;
         
-        // Reasonable baseline values for a RAMSETE follower in units of meters and seconds
+        /** Ramsete constants */
         // public static final double kRamseteB = 2;
         public static final double kRamseteB = 3;
         // public static final double kRamseteZeta = 0.7;
@@ -62,4 +72,5 @@ public final class Constants {
     }
 
     public static final double DEADBAND = 0.06;
+    public static final int TIMEOUT_MS = 10;
 }

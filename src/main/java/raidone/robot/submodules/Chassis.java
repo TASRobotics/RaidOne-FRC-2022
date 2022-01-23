@@ -1,23 +1,16 @@
 package raidone.robot.submodules;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.RamseteController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import raidone.robot.Constants.ChassisConstants;
-import raidone.robot.Constants.AutoConstants;
+import raidone.robot.Constants;
 
 import raidone.robot.wrappers.InactiveCompressor;
 import raidone.robot.wrappers.InactiveDoubleSolenoid;
@@ -28,6 +21,7 @@ public class Chassis extends Submodule {
         HIGH_TORQUE, LOW_TORQUE, OFF
     }
 
+    
     private final WPI_TalonSRX mLeftLeader = new WPI_TalonSRX(ChassisConstants.LEFT_LEADER_ID);
     private final WPI_TalonSRX mLeftFollowerA = new WPI_TalonSRX(ChassisConstants.LEFT_FOLLOWER_A_ID);
     private final WPI_TalonSRX mLeftFollowerB = new WPI_TalonSRX(ChassisConstants.LEFT_FOLLOWER_B_ID);
@@ -36,18 +30,7 @@ public class Chassis extends Submodule {
     private final WPI_TalonSRX mRightFollowerA = new WPI_TalonSRX(ChassisConstants.RIGHT_FOLLOWER_A_ID);
     private final WPI_TalonSRX mRightFollowerB = new WPI_TalonSRX(ChassisConstants.RIGHT_FOLLOWER_B_ID);
 
-    private final MotorControllerGroup mLeftMotors = 
-        new MotorControllerGroup(
-            mLeftLeader, 
-            mLeftFollowerA, 
-            mLeftFollowerB);
-    private final MotorControllerGroup mRightMotors = 
-        new MotorControllerGroup(
-            mRightLeader, 
-            mRightFollowerA, 
-            mRightFollowerB);
-
-    private final DifferentialDrive mChassis = new DifferentialDrive(mLeftMotors, mRightMotors);
+    private final DifferentialDrive mChassis = new DifferentialDrive(mLeftLeader, mRightLeader);
 
     private final WPI_PigeonIMU mImu = new WPI_PigeonIMU(ChassisConstants.IMU_ID);
 
@@ -57,6 +40,7 @@ public class Chassis extends Submodule {
         ChassisConstants.SHIFTER_LOW_TORQUE_ID);
 
 
+    private Chassis() {}
     private static Chassis instance = null;
     public static Chassis getInstance() {
         if(instance == null) {
@@ -67,9 +51,56 @@ public class Chassis extends Submodule {
 
     @Override
     public void onInit() {
-        // Inverts motors and encoders
-        mRightMotors.setInverted(true);
+        /** Config factory default for all motors */
+        mLeftLeader.configFactoryDefault();
+        mLeftFollowerA.configFactoryDefault();
+        mLeftFollowerB.configFactoryDefault();
+        mRightLeader.configFactoryDefault();
+        mRightFollowerA.configFactoryDefault();
+        mRightFollowerB.configFactoryDefault();
+
+        /** Config followers */
+        mLeftFollowerA.follow(mLeftLeader);
+        mLeftFollowerB.follow(mLeftLeader);
+        mRightFollowerA.follow(mLeftLeader);
+        mRightFollowerB.follow(mLeftLeader);
+
+        /** Inverts motors */
+        mLeftLeader.setInverted(false);
+        mLeftFollowerA.setInverted(InvertType.FollowMaster);
+        mLeftFollowerB.setInverted(InvertType.FollowMaster);
+        mRightLeader.setInverted(true);
+        mRightFollowerA.setInverted(InvertType.FollowMaster);
+        mRightFollowerB.setInverted(InvertType.FollowMaster);
+
+        /** Inverts encoder */
         mLeftLeader.setSensorPhase(true);
+
+        /** Sets feedback sensor */
+        mLeftLeader.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 
+                                                 ChassisConstants.PID_LOOP_IDX, 
+                                                 Constants.TIMEOUT_MS);
+        mLeftLeader.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 
+                                                 ChassisConstants.PID_LOOP_IDX, 
+                                                 Constants.TIMEOUT_MS);
+
+        /** Config the peak and nominal outputs */
+        mLeftLeader.configNominalOutputForward(0, Constants.TIMEOUT_MS);
+        mLeftLeader.configNominalOutputReverse(0, Constants.TIMEOUT_MS);
+        mLeftLeader.configPeakOutputForward(1, Constants.TIMEOUT_MS);
+        mLeftLeader.configPeakOutputReverse(-1, Constants.TIMEOUT_MS);
+        mRightLeader.configNominalOutputForward(0, Constants.TIMEOUT_MS);
+        mRightLeader.configNominalOutputReverse(0, Constants.TIMEOUT_MS);
+        mRightLeader.configPeakOutputForward(1, Constants.TIMEOUT_MS);
+        mRightLeader.configPeakOutputReverse(-1, Constants.TIMEOUT_MS);
+
+        /** Sets velocity PID gain */
+        mLeftLeader.config_kF(ChassisConstants.PID_LOOP_IDX, ChassisConstants.LEFT_kF, Constants.TIMEOUT_MS);
+        mLeftLeader.config_kP(ChassisConstants.PID_LOOP_IDX, ChassisConstants.LEFT_kP, Constants.TIMEOUT_MS);
+        mLeftLeader.config_kD(ChassisConstants.PID_LOOP_IDX, ChassisConstants.LEFT_kD, Constants.TIMEOUT_MS);
+        mRightLeader.config_kF(ChassisConstants.PID_LOOP_IDX, ChassisConstants.RIGHT_kF, Constants.TIMEOUT_MS);
+        mRightLeader.config_kP(ChassisConstants.PID_LOOP_IDX, ChassisConstants.RIGHT_kP, Constants.TIMEOUT_MS);
+        mRightLeader.config_kD(ChassisConstants.PID_LOOP_IDX, ChassisConstants.RIGHT_kD, Constants.TIMEOUT_MS);
 
         // Reset encoders
         resetEncoders();
@@ -90,6 +121,17 @@ public class Chassis extends Submodule {
     }
 
     /**
+     * Sets desired velocity
+     * 
+     * @param left left vel
+     * @param right right vel
+     */
+    public void setDesiredVelocity(double left, double right) {
+        mLeftLeader.set(ControlMode.Velocity, left);
+        mRightLeader.set(ControlMode.Velocity, right);
+    }
+
+    /**
      * Changes the shifter state
      * 
      * @param shift shifter setting
@@ -103,10 +145,6 @@ public class Chassis extends Submodule {
             shifter.set(Value.kOff);
         }
     }
-
-    // public DifferentialDrive getDifferentialDrive() {
-    //     return mChassis;
-    // }
 
     /**
      * Calculates distance travelled on the left side based on encoder readings
@@ -125,8 +163,6 @@ public class Chassis extends Submodule {
     public double getRightEncoderDistance() {
         return mRightLeader.getSelectedSensorPosition() * ChassisConstants.kEncoderDistancePerPulse;
     }
-
-    
 
     /**
      * Returns the current wheel speeds of the robot.
@@ -156,8 +192,13 @@ public class Chassis extends Submodule {
         return mRightLeader.getSelectedSensorVelocity() * ChassisConstants.kEncoderDistancePerPulse * 10;
     }
 
-    
-
+    /**
+     * A better arcade drive
+     * 
+     * @param throttle usually the left y axis of a controller
+     * @param turn usually the right x axis of a controllers
+     * @param quickTurn basically an arcade drive switch
+     */
     public void curvatureDrive(double throttle, double turn, boolean quickTurn) {
         mChassis.curvatureDrive(throttle, turn, quickTurn);
     }
@@ -169,8 +210,8 @@ public class Chassis extends Submodule {
      * @param rightVolts the commanded right output
      */
     public void tankDriveVolts(double leftVolts, double rightVolts) {
-        mLeftMotors.setVoltage(leftVolts);
-        mRightMotors.setVoltage(rightVolts);
+        mLeftLeader.setVoltage(leftVolts);
+        mRightLeader.setVoltage(rightVolts);
         mChassis.feed();
     }
 
@@ -237,6 +278,4 @@ public class Chassis extends Submodule {
     public double getTurnRate() {
         return -mImu.getRate();
     }
-
-
 }

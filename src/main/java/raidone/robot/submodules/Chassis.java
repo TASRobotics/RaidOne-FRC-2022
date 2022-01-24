@@ -4,11 +4,17 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 
+import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import raidone.robot.Constants.AutoConstants;
 import raidone.robot.Constants.ChassisConstants;
 import raidone.robot.Constants;
 
@@ -21,18 +27,20 @@ public class Chassis extends Submodule {
         HIGH_TORQUE, LOW_TORQUE, OFF
     }
 
-    
     private final WPI_TalonSRX mLeftLeader = new WPI_TalonSRX(ChassisConstants.LEFT_LEADER_ID);
-    private final WPI_TalonSRX mLeftFollowerA = new WPI_TalonSRX(ChassisConstants.LEFT_FOLLOWER_A_ID);
-    private final WPI_TalonSRX mLeftFollowerB = new WPI_TalonSRX(ChassisConstants.LEFT_FOLLOWER_B_ID);
+    private final WPI_VictorSPX mLeftFollowerA = new WPI_VictorSPX(ChassisConstants.LEFT_FOLLOWER_A_ID);
+    private final WPI_VictorSPX mLeftFollowerB = new WPI_VictorSPX(ChassisConstants.LEFT_FOLLOWER_B_ID);
 
     private final WPI_TalonSRX mRightLeader = new WPI_TalonSRX(ChassisConstants.RIGHT_LEADER_ID);
-    private final WPI_TalonSRX mRightFollowerA = new WPI_TalonSRX(ChassisConstants.RIGHT_FOLLOWER_A_ID);
-    private final WPI_TalonSRX mRightFollowerB = new WPI_TalonSRX(ChassisConstants.RIGHT_FOLLOWER_B_ID);
+    private final WPI_VictorSPX mRightFollowerA = new WPI_VictorSPX(ChassisConstants.RIGHT_FOLLOWER_A_ID);
+    private final WPI_VictorSPX mRightFollowerB = new WPI_VictorSPX(ChassisConstants.RIGHT_FOLLOWER_B_ID);
 
     private final DifferentialDrive mChassis = new DifferentialDrive(mLeftLeader, mRightLeader);
 
     private final WPI_PigeonIMU mImu = new WPI_PigeonIMU(ChassisConstants.IMU_ID);
+
+    private DifferentialDriveOdometry mOdometry;
+    private RamseteController ramseteController;
 
     private final InactiveCompressor compressor = InactiveCompressor.getInstance();
     private final InactiveDoubleSolenoid shifter = new InactiveDoubleSolenoid(
@@ -62,8 +70,8 @@ public class Chassis extends Submodule {
         /** Config followers */
         mLeftFollowerA.follow(mLeftLeader);
         mLeftFollowerB.follow(mLeftLeader);
-        mRightFollowerA.follow(mLeftLeader);
-        mRightFollowerB.follow(mLeftLeader);
+        mRightFollowerA.follow(mRightLeader);
+        mRightFollowerB.follow(mRightLeader);
 
         /** Inverts motors */
         mLeftLeader.setInverted(false);
@@ -105,12 +113,22 @@ public class Chassis extends Submodule {
         // Reset encoders
         resetEncoders();
 
+        mOdometry = new DifferentialDriveOdometry(new Rotation2d(getHeading()));
+        ramseteController = new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta);
+
         changeShifterState(GearShift.LOW_TORQUE);
     }
 
     @Override
+    public void onStart(double timestamp) {
+        zero();
+    }
+
+    @Override
     public void run() {
-        
+        mOdometry.update(
+            new Rotation2d(
+                getHeading()), getLeftEncoderDistance(), getRightEncoderDistance());
     }
 
     /** Stops the compressor and all chassis motors */
@@ -220,6 +238,7 @@ public class Chassis extends Submodule {
     public void zero() {
         resetEncoders();
         zeroHeading();
+        resetOdometry(new Pose2d(0.0, 0.0, new Rotation2d(0.0)));
     }
 
     /** Resets drive encoders to 0 */
@@ -277,5 +296,24 @@ public class Chassis extends Submodule {
      */
     public double getTurnRate() {
         return -mImu.getRate();
+    }
+
+    /**
+     * Returns the currently-estimated pose of the robot.
+     *
+     * @return The pose.
+     */
+    public Pose2d getPose() {
+        return mOdometry.getPoseMeters();
+    }
+
+    /**
+     * Resets the odometry to the specified pose.
+     *
+     * @param pose The pose to which to set the odometry.
+     */
+    public void resetOdometry(Pose2d pose) {
+        resetEncoders();
+        mOdometry.resetPosition(pose, new Rotation2d(getHeading()));
     }
 }

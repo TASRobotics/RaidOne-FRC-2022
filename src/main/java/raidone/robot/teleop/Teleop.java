@@ -44,6 +44,9 @@ public class Teleop {
         chassis.curvatureDrive(-master.getRawAxis(1), master.getRawAxis(2), Math.abs(master.getRawAxis(1)) < Constants.DEADBAND);
         if(master.getLeftBumper()) chassis.changeShifterState(GearShift.HIGH_TORQUE);
         else if(master.getRightBumper()) chassis.changeShifterState(GearShift.LOW_TORQUE);
+
+        chassis.updateOdometry();
+
         SmartDashboard.putNumber("left enc", chassis.getLeftEncoderDistance());
         SmartDashboard.putNumber("right enc", chassis.getLeftEncoderDistance());
         SmartDashboard.putNumber("Pure heading", chassis.getHeading());

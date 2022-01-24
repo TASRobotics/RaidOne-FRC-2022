@@ -126,9 +126,7 @@ public class Chassis extends Submodule {
 
     @Override
     public void run() {
-        mOdometry.update(
-            new Rotation2d(
-                getHeading()), getLeftEncoderDistance(), getRightEncoderDistance());
+        
     }
 
     /** Stops the compressor and all chassis motors */
@@ -315,5 +313,11 @@ public class Chassis extends Submodule {
     public void resetOdometry(Pose2d pose) {
         resetEncoders();
         mOdometry.resetPosition(pose, new Rotation2d(getHeading()));
+    }
+
+    public void updateOdometry() {
+        mOdometry.update(
+            new Rotation2d(
+                getHeading()), getLeftEncoderDistance(), getRightEncoderDistance());
     }
 }

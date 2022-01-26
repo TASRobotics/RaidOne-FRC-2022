@@ -3,30 +3,53 @@ package raidone.robot.submodules;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.InvertType;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 
-import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import raidone.robot.Constants.AutoConstants;
 import raidone.robot.Constants.ChassisConstants;
+import raidone.robot.pathing.TrajectoryFollower;
+import raidone.robot.pathing.VelocityController;
 import raidone.robot.Constants;
 
 import raidone.robot.wrappers.InactiveCompressor;
 import raidone.robot.wrappers.InactiveDoubleSolenoid;
 
 public class Chassis extends Submodule {
+    public static class PeriodicIO {
+        // Inputs
+        public DifferentialDriveWheelSpeeds wheelSpeeds = new DifferentialDriveWheelSpeeds(0.0, 0.0);
+
+        public double leftPosition = 0; // in meters
+        public double rightPosition = 0; // in meters
+
+        public double leftVelocity = 0; // in m/s
+        public double rightVelocity = 0; // in m/s
+
+        // Outputs
+        public double leftPercent = 0.0;
+        public double rightPercent = 0.0;
+    }
+
     /** Enum controlling gear shift */
     public static enum GearShift {
         HIGH_TORQUE, LOW_TORQUE, OFF
     }
 
+    /** Enum controlling control state */
+    public static enum ControlState {
+        OPEN_LOOP, PATH_FOLLOWING
+    }
+
+    /** Motors */
     private final WPI_TalonSRX mLeftLeader = new WPI_TalonSRX(ChassisConstants.LEFT_LEADER_ID);
     private final WPI_VictorSPX mLeftFollowerA = new WPI_VictorSPX(ChassisConstants.LEFT_FOLLOWER_A_ID);
     private final WPI_VictorSPX mLeftFollowerB = new WPI_VictorSPX(ChassisConstants.LEFT_FOLLOWER_B_ID);
@@ -37,11 +60,19 @@ public class Chassis extends Submodule {
 
     private final DifferentialDrive mChassis = new DifferentialDrive(mLeftLeader, mRightLeader);
 
+    /** Sensors */
     private final WPI_PigeonIMU mImu = new WPI_PigeonIMU(ChassisConstants.IMU_ID);
 
+    /** Controllers */
     private DifferentialDriveOdometry mOdometry;
-    private RamseteController ramseteController;
+    private TrajectoryFollower trajectoryFollower;
+    private VelocityController leftVelController, rightVelController;
+    private double leftPrevVel, rightPrevVel;
 
+    private ControlState controlState = ControlState.OPEN_LOOP;
+    private PeriodicIO periodicIO = new PeriodicIO();
+
+    /** Pneumatics */
     private final InactiveCompressor compressor = InactiveCompressor.getInstance();
     private final InactiveDoubleSolenoid shifter = new InactiveDoubleSolenoid(
         ChassisConstants.SHIFTER_HIGH_TORQUE_ID, 
@@ -103,48 +134,101 @@ public class Chassis extends Submodule {
         mRightLeader.configPeakOutputReverse(-1, Constants.TIMEOUT_MS);
 
         /** Sets velocity PID gain */
-        mLeftLeader.config_kF(ChassisConstants.PID_LOOP_IDX, ChassisConstants.LEFT_kF, Constants.TIMEOUT_MS);
-        mLeftLeader.config_kP(ChassisConstants.PID_LOOP_IDX, ChassisConstants.LEFT_kP, Constants.TIMEOUT_MS);
-        mLeftLeader.config_kD(ChassisConstants.PID_LOOP_IDX, ChassisConstants.LEFT_kD, Constants.TIMEOUT_MS);
-        mRightLeader.config_kF(ChassisConstants.PID_LOOP_IDX, ChassisConstants.RIGHT_kF, Constants.TIMEOUT_MS);
-        mRightLeader.config_kP(ChassisConstants.PID_LOOP_IDX, ChassisConstants.RIGHT_kP, Constants.TIMEOUT_MS);
-        mRightLeader.config_kD(ChassisConstants.PID_LOOP_IDX, ChassisConstants.RIGHT_kD, Constants.TIMEOUT_MS);
+        // mLeftLeader.config_kF(ChassisConstants.PID_LOOP_IDX, ChassisConstants.LEFT_kF, Constants.TIMEOUT_MS);
+        // mLeftLeader.config_kP(ChassisConstants.PID_LOOP_IDX, ChassisConstants.LEFT_kP, Constants.TIMEOUT_MS);
+        // mLeftLeader.config_kD(ChassisConstants.PID_LOOP_IDX, ChassisConstants.LEFT_kD, Constants.TIMEOUT_MS);
+        // mRightLeader.config_kF(ChassisConstants.PID_LOOP_IDX, ChassisConstants.RIGHT_kF, Constants.TIMEOUT_MS);
+        // mRightLeader.config_kP(ChassisConstants.PID_LOOP_IDX, ChassisConstants.RIGHT_kP, Constants.TIMEOUT_MS);
+        // mRightLeader.config_kD(ChassisConstants.PID_LOOP_IDX, ChassisConstants.RIGHT_kD, Constants.TIMEOUT_MS);
+
+        mImu.configFactoryDefault();
+
+        /** Config after imu init */
+        trajectoryFollower = new TrajectoryFollower(ChassisConstants.DRIVE_KINEMATICS);
+        leftVelController = new VelocityController(ChassisConstants.LEFT_kV, ChassisConstants.LEFT_kA, ChassisConstants.LEFT_kP);
+        rightVelController = new VelocityController(ChassisConstants.RIGHT_kV, ChassisConstants.RIGHT_kA, ChassisConstants.RIGHT_kP);
+        leftPrevVel = 0.0;
+        rightPrevVel = 0.0;
 
         // Reset encoders
-        resetEncoders();
+        // resetEncoders();
+        zero();
 
-        mOdometry = new DifferentialDriveOdometry(new Rotation2d(getHeading()));
-        ramseteController = new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta);
+        // mOdometry = new DifferentialDriveOdometry(new Rotation2d(getHeading()));
+        mOdometry = new DifferentialDriveOdometry(new Rotation2d(getHeadingRad()));
 
         changeShifterState(GearShift.LOW_TORQUE);
     }
 
     @Override
     public void onStart(double timestamp) {
+        controlState = ControlState.OPEN_LOOP;
+
+        periodicIO = new PeriodicIO();
+
+        stop();
         zero();
     }
 
     @Override
     public void run() {
-        
+        // switch(controlState) {
+        //     case OPEN_LOOP: 
+                mLeftLeader.set(ControlMode.PercentOutput, periodicIO.leftPercent);
+                mRightLeader.set(ControlMode.PercentOutput, periodicIO.rightPercent);
+            //     break;
+
+            // case PATH_FOLLOWING: 
+        // }
+    }
+
+    @Override
+    public void update(double timestamp) {
+        periodicIO.leftPosition = getLeftEncoderDistance();
+        periodicIO.rightPosition = getRightEncoderDistance();
+
+        periodicIO.leftVelocity = getLeftVelocity();
+        periodicIO.rightVelocity = getRightVelocity();
+
+        updateOdometry();
+
+        if(controlState == ControlState.PATH_FOLLOWING) {
+            double leftVel = trajectoryFollower.update(getPose()).leftMetersPerSecond;
+            double rightVel = trajectoryFollower.update(getPose()).rightMetersPerSecond;
+
+            /** Calculate accel */
+            double leftAccel = leftVel - leftPrevVel;
+            double rightAccel = rightVel - rightPrevVel;
+            leftPrevVel = leftVel;
+            rightPrevVel = rightVel;
+
+            setPercentSpeed(
+                leftVelController.update(leftVel, leftAccel, getLeftVelocity()), 
+                rightVelController.update(rightVel, rightAccel, getRightVelocity()));
+        }
     }
 
     /** Stops the compressor and all chassis motors */
     @Override
     public void stop() {
-        mChassis.stopMotor();
-        compressor.changeState();
+        controlState = ControlState.OPEN_LOOP;
+
+        periodicIO.leftPercent = 0.0;
+        periodicIO.rightPercent = 0.0;
+
+        mLeftLeader.set(ControlMode.Disabled, 0.0);
+        mRightLeader.set(ControlMode.Disabled, 0.0);
     }
 
     /**
-     * Sets desired velocity
+     * Sets percent speed [-1, 1]
      * 
-     * @param left left vel
-     * @param right right vel
+     * @param left left speed
+     * @param right right speed
      */
-    public void setDesiredVelocity(double left, double right) {
-        mLeftLeader.set(ControlMode.Velocity, left);
-        mRightLeader.set(ControlMode.Velocity, right);
+    public void setPercentSpeed(double left, double right) {
+        periodicIO.leftPercent = left;
+        periodicIO.rightPercent = right;
     }
 
     /**
@@ -278,6 +362,15 @@ public class Chassis extends Submodule {
     }
 
     /**
+     * Returns the heading of the robot in radians
+     * 
+     * @return the robot's heading in radians, from -pi to pi
+     */
+    public double getHeadingRad() {
+        return Math.toRadians(getHeading());
+    }
+
+    /**
      * Rescales an angle to [-180, 180]
      * 
      * @param angle the angle to be rescalled
@@ -312,12 +405,59 @@ public class Chassis extends Submodule {
      */
     public void resetOdometry(Pose2d pose) {
         resetEncoders();
-        mOdometry.resetPosition(pose, new Rotation2d(getHeading()));
+        mOdometry.resetPosition(pose, new Rotation2d(getHeadingRad()));
     }
 
-    public void updateOdometry() {
+    /** Updates odom */
+    private void updateOdometry() {
         mOdometry.update(
             new Rotation2d(
-                getHeading()), getLeftEncoderDistance(), getRightEncoderDistance());
+                getHeadingRad()), getLeftEncoderDistance(), getRightEncoderDistance());
+    }
+
+    /**
+     * Sets the brake mode to brake or coast.
+     * 
+     * @param brake whether to brake or not
+     */
+    public void setBrakeMode(boolean brake) {
+        if (brake) {
+            mRightLeader.setNeutralMode(NeutralMode.Brake);
+            mLeftLeader.setNeutralMode(NeutralMode.Brake);
+        } else {
+            mRightLeader.setNeutralMode(NeutralMode.Coast);
+            mLeftLeader.setNeutralMode(NeutralMode.Coast);
+        }
+    }
+
+    /**
+     * Makes the drive start following a Path.
+     * 
+     * @param path           the path to follow
+     * @param zeroAllSensors whether to zero all sensors to the first point
+     */
+    public void setDrivePath(Trajectory trajectory) {
+        if (trajectoryFollower != null) {
+            // Stops the drive
+            stop();
+
+            // Reset & start trajectory follower
+            trajectoryFollower.reset();
+            trajectoryFollower.start(trajectory);
+
+            controlState = ControlState.PATH_FOLLOWING;
+        }
+    }
+
+    /**
+     * Returns whether the drive has finished following a path.
+     * 
+     * @return if the drive is finished pathing
+     */
+    public boolean isFinishedWithPath() {
+        if (trajectoryFollower == null || controlState != ControlState.PATH_FOLLOWING) {
+            return false;
+        }
+        return trajectoryFollower.isFinished();
     }
 }

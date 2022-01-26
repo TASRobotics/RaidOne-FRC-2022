@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import raidone.robot.Constants;
 import raidone.robot.submodules.Chassis;
-// import raidone.robot.submodules.ChassisController;
 import raidone.robot.submodules.Chassis.GearShift;
 
 public class Teleop {
@@ -39,21 +38,20 @@ public class Teleop {
     /**
      * Continuously loops in teleop.
      */
-    private int bob;
     public void onLoop() {
         chassis.curvatureDrive(-master.getRawAxis(1), master.getRawAxis(2), Math.abs(master.getRawAxis(1)) < Constants.DEADBAND);
         if(master.getLeftBumper()) chassis.changeShifterState(GearShift.HIGH_TORQUE);
         else if(master.getRightBumper()) chassis.changeShifterState(GearShift.LOW_TORQUE);
 
-        chassis.updateOdometry();
+        // chassis.updateOdometry();
 
         SmartDashboard.putNumber("left enc", chassis.getLeftEncoderDistance());
         SmartDashboard.putNumber("right enc", chassis.getLeftEncoderDistance());
         SmartDashboard.putNumber("Pure heading", chassis.getHeading());
+        SmartDashboard.putNumber("Pure heading rad", Math.toRadians(chassis.getHeading()));
 
         SmartDashboard.putNumber("x pose", chassis.getPose().getX());
         SmartDashboard.putNumber("y pose", chassis.getPose().getY());
         SmartDashboard.putNumber("rotation", chassis.getPose().getRotation().getDegrees());
-        SmartDashboard.putNumber("bob", bob++); 
     }
 }

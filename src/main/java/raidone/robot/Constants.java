@@ -24,18 +24,19 @@ public final class Constants {
 
         /** Velocity PID */
         public static final int PID_LOOP_IDX = 0;
-        public static final double LEFT_kF = 0.0;
+        public static final double LEFT_kV = 0.0;
         public static final double LEFT_kP = 0.0;
-        public static final double LEFT_kD = 0.0;
-        public static final double RIGHT_kF = 0.0;
+        public static final double LEFT_kA = 0.0;
+        public static final double RIGHT_kV = 0.0;
         public static final double RIGHT_kP = 0.0;
-        public static final double RIGHT_kD = 0.0;
+        public static final double RIGHT_kA = 0.0;
 
-        
+        /** Drive kinematics (for ramsete) */
         public static final double TRACK_WIDTH = 0.69;
         public static final DifferentialDriveKinematics DRIVE_KINEMATICS =
             new DifferentialDriveKinematics(TRACK_WIDTH);
         
+        /** base constants */
         public static final int kEncoderCPR = 8129;
         public static final double kWheelDiameterMeters = 0.1524;
         public static final double kEncoderDistancePerPulse =
@@ -56,6 +57,7 @@ public final class Constants {
     }
 
     public static final class OIConstants {
+        /** Controller constants */
         public static final int kDriverControllerPort = 0;
     }
 
@@ -71,6 +73,7 @@ public final class Constants {
         public static final double kRamseteZeta = 1.0;
     }
 
+    /** Universal constants */
     public static final double DEADBAND = 0.06;
     public static final int TIMEOUT_MS = 10;
 }

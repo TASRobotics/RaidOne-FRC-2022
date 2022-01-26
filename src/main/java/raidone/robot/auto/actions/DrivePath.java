@@ -1,56 +1,89 @@
-// package raidone.robot.auto.actions;
+package raidone.robot.auto.actions;
 
-// import edu.wpi.first.math.controller.PIDController;
-// import edu.wpi.first.math.controller.RamseteController;
-// import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-// import edu.wpi.first.math.geometry.Pose2d;
-// import edu.wpi.first.math.geometry.Rotation2d;
-// import edu.wpi.first.math.trajectory.Trajectory;
-// import edu.wpi.first.math.trajectory.TrajectoryConfig;
-// import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
-// import edu.wpi.first.wpilibj2.command.RamseteCommand;
-// import raidone.robot.Constants.ChassisConstants;
-// import raidone.robot.Constants.AutoConstants;
-// import raidone.robot.submodules.Chassis;
-// import raidone.robot.submodules.ChassisController;
+import edu.wpi.first.math.trajectory.Trajectory;
+import raidone.robot.submodules.Chassis;
+import raidone.robot.utils.FinishConditionInterface;
 
-// public class DrivePath implements Action {
-//     private static final Chassis chassis = Chassis.getInstance();
-//     private static final ChassisController chassisController = ChassisController.getInstance();
+/** Action for following a path. */
+public class DrivePath implements Action {
 
-//     private Trajectory path;
+    private static final Chassis chassis = Chassis.getInstance();
 
-//     public DrivePath(Trajectory path) {
-//         this.path = path;
-//     }
+    private Trajectory path;
+    private boolean isFirstPath;
+    private FinishConditionInterface condition;
 
-//     /**
-//      * Returns whether the action is finished or not.
-//      * 
-//      * @return if the action is finished
-//      */
-//     @Override
-//     public boolean isFinished() {
-//         return chassisController.isSettled();
-//     }
+    /**
+     * Constructs a DrivePath action that follows a path.
+     * 
+     * @param path the path to follow
+     */
+    public DrivePath(Trajectory path) {
+        this(path, false, null);
+    }
 
-//     /**
-//      * Called AutoSequence iteratively until isFinished returns true. 
-//      * Iterative logic lives in this method.
-//      */
-//     public void update() {
+    /**
+     * Constructs a DrivePath action that follows a path.
+     * 
+     * @param path the path to follow
+     * @param isFirstPath whether this is the first path in an autonomous sequence
+     */
+    public DrivePath(Trajectory path, boolean isFirstPath) {
+        this(path, isFirstPath, null);
+    }
 
-//     }
+    /**
+     * Constructs a DrivePath action that finishes when the path is finished or
+     * if the provided lambda returns true.
+     * 
+     * @param path      path to follow
+     * @param condition alternate condition to end the action
+     */
+    public DrivePath(Trajectory path, FinishConditionInterface condition) {
+        this(path, false, condition);
+    }
 
-//     /**
-//      * Runs code once when the action finishes, usually for clean up.
-//      */
-//     public void done() {
-//         chassisController.zero();
-//     }
+    /**
+     * Constructs a DrivePath action that follows a path.
+     * 
+     * @param path the path to follow
+     * @param isFirstPath whether this is the first path in an autonomous sequence
+     * @param condition alternate condition to end the action
+     */
+    public DrivePath(Trajectory path, boolean isFirstPath, FinishConditionInterface condition) {
+        this.path = path;
+        this.isFirstPath = isFirstPath;
+        this.condition = condition;
+    }
 
-//     /**
-//      * Runs code once when the action is started for set up.
-//      */
-//     public void start() {}
-// }
+    @Override
+    public boolean isFinished() {
+        return chassis.isFinishedWithPath() || (condition != null && condition.passed());
+    }
+
+    @Override
+    public void start() {
+        System.out.println("[Auto] Action '" + getClass().getSimpleName() + "' started!");
+        if (isFirstPath) {
+            chassis.zero();
+            /**
+             * Set the odometry pose to the start of the trajectory.
+             * Note: Should only do this on the first trajectory.
+             */ 
+            chassis.resetOdometry(path.getInitialPose());
+        }
+        // chassis.setGearShift(GearShift.LOW_TORQUE);
+        chassis.setBrakeMode(true);
+        chassis.setDrivePath(path);
+    }
+
+    @Override
+    public void update() {
+    }
+    
+    public void done() {
+        System.out.println("[Auto] Action '" + getClass().getSimpleName() + "' finished!");
+        chassis.stop();
+        chassis.setBrakeMode(false);
+    }
+}

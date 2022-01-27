@@ -30,7 +30,7 @@ public class Teleop {
      * Runs at the start of teleop.
      */
     public void onStart() {
-        chassis.changeShifterState(GearShift.LOW_TORQUE);
+        // chassis.changeShifterState(GearShift.LOW_TORQUE);
 
         chassis.zero();
     }
@@ -40,15 +40,15 @@ public class Teleop {
      */
     public void onLoop() {
         chassis.curvatureDrive(-master.getRawAxis(1), master.getRawAxis(2), Math.abs(master.getRawAxis(1)) < Constants.DEADBAND);
-        if(master.getLeftBumper()) chassis.changeShifterState(GearShift.HIGH_TORQUE);
-        else if(master.getRightBumper()) chassis.changeShifterState(GearShift.LOW_TORQUE);
+        // if(master.getLeftBumper()) chassis.changeShifterState(GearShift.HIGH_TORQUE);
+        // else if(master.getRightBumper()) chassis.changeShifterState(GearShift.LOW_TORQUE);
 
         // chassis.updateOdometry();
 
-        SmartDashboard.putNumber("left enc", chassis.getLeftEncoderDistance());
-        SmartDashboard.putNumber("right enc", chassis.getLeftEncoderDistance());
-        SmartDashboard.putNumber("Pure heading", chassis.getHeading());
-        SmartDashboard.putNumber("Pure heading rad", Math.toRadians(chassis.getHeading()));
+        SmartDashboard.putNumber("left enc", chassis.getPeriodicIO().leftPosition);
+        SmartDashboard.putNumber("right enc", chassis.getPeriodicIO().rightPosition);
+        SmartDashboard.putNumber("Pure heading", chassis.getPeriodicIO().heading.getDegrees());
+        SmartDashboard.putNumber("Pure heading rad", chassis.getPeriodicIO().heading.getDegrees());
 
         SmartDashboard.putNumber("x pose", chassis.getPose().getX());
         SmartDashboard.putNumber("y pose", chassis.getPose().getY());

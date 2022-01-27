@@ -1,30 +1,33 @@
 package raidone.robot.auto.sequences;
 
+import java.util.Arrays;
+
 import com.pathplanner.lib.PathPlanner;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import raidone.robot.Constants.AutoConstants;
-// import raidone.robot.submodules.ChassisController;
+import raidone.robot.auto.actions.DrivePath;
+import raidone.robot.auto.actions.SeriesAction;
+import raidone.robot.submodules.Chassis;
 
 public class TestSequence extends AutoSequence {
-    // private static ChassisController chassisController = ChassisController.getInstance();
-    private Trajectory path;
+    private static final Chassis chassis = Chassis.getInstance();
+
+    private static final Trajectory path = PathPlanner.loadPath("TestCurve", AutoConstants.kMaxSpeedMetersPerSecond, AutoConstants.kMaxAccelerationMetersPerSecondSquared);
 
     public TestSequence() {}
 
     @Override
     public void sequence() {
-        path = PathPlanner.loadPath("TestCurve", AutoConstants.kMaxSpeedMetersPerSecond, AutoConstants.kMaxAccelerationMetersPerSecondSquared);
-        // chassisController.setTolerance(new Pose2d(0.5, 0.5, new Rotation2d(10)));
-        // chassisController.setPath(path);
+        addAction(new SeriesAction(Arrays.asList(
+            new DrivePath(path, true)
+        )));
     }
 
-    // @Override
-    // public void onEnded() {
-        
-    // }
+    @Override
+    public void onEnded() {
+        System.out.println("TestSequence ended!");
+    }
 
     @Override
     public String getName() {

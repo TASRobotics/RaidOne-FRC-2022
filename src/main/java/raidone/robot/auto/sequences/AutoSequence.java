@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import raidone.robot.auto.actions.Action;
+import raidone.robot.auto.actions.SeriesAction;
 
 public abstract class AutoSequence {
 
@@ -69,10 +70,10 @@ public abstract class AutoSequence {
     /**
      * Adds an action to the action queue.
      * 
-     * @param action action to add
+     * @param seriesAction action to add
      */
-    public void addAction(Action action) {
-        actions.add(action);
+    public void addAction(SeriesAction seriesAction) {
+        actions.add(seriesAction);
     }
 
     /**

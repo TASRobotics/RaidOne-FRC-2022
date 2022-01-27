@@ -24,10 +24,10 @@ public final class Constants {
 
         /** Velocity PID */
         public static final int PID_LOOP_IDX = 0;
-        public static final double LEFT_kV = 0.0;
+        public static final double LEFT_kV = 0.31;
         public static final double LEFT_kP = 0.0;
         public static final double LEFT_kA = 0.0;
-        public static final double RIGHT_kV = 0.0;
+        public static final double RIGHT_kV = 0.325;
         public static final double RIGHT_kP = 0.0;
         public static final double RIGHT_kA = 0.0;
 
@@ -63,8 +63,8 @@ public final class Constants {
 
     public static final class AutoConstants {
         /** Motion profile constants */
-        public static final double kMaxSpeedMetersPerSecond = 1.5;
-        public static final double kMaxAccelerationMetersPerSecondSquared = 1.5;
+        public static final double kMaxSpeedMetersPerSecond = 3;
+        public static final double kMaxAccelerationMetersPerSecondSquared = 3;
         
         /** Ramsete constants */
         // public static final double kRamseteB = 2;

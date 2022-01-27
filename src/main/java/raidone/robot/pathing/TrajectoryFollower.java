@@ -1,10 +1,14 @@
 package raidone.robot.pathing;
 
+import com.pathplanner.lib.PathPlannerTrajectory.PathPlannerState;
+
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.Trajectory.State;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
@@ -53,11 +57,12 @@ public class TrajectoryFollower {
      */
     public DifferentialDriveWheelSpeeds update(Pose2d currentPose) {
         double time = timer.get();
-        var sampled = currentTrajectory.sample(time);
+        PathPlannerState sampled = (PathPlannerState) currentTrajectory.sample(time);
         System.out.println("Sampled: " + sampled.toString() + " | Actual: " + currentPose.toString());
-        var targetWheelSpeeds = kinematics.toWheelSpeeds(
-            controller.calculate(currentPose, sampled)
-        );
+        // var targetWheelSpeeds = kinematics.toWheelSpeeds(
+        //     controller.calculate(currentPose, sampled)
+        // );
+        var targetWheelSpeeds = kinematics.toWheelSpeeds(new ChassisSpeeds(sampled.velocityMetersPerSecond, 0, sampled.angularVelocity.getRadians()));
         return targetWheelSpeeds;
     }
 

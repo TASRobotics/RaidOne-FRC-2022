@@ -1,5 +1,6 @@
 package raidone.robot.submodules;
 
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.InvertType;
@@ -14,7 +15,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import raidone.robot.Constants.ChassisConstants;
 import raidone.robot.pathing.TrajectoryFollower;
 import raidone.robot.pathing.VelocityController;
@@ -30,9 +31,15 @@ public class Chassis extends Submodule {
 
         public double leftPosition = 0; // in meters
         public double rightPosition = 0; // in meters
+        public Rotation2d heading = new Rotation2d(0);
 
         public double leftVelocity = 0; // in m/s
         public double rightVelocity = 0; // in m/s
+
+        public double x = 0;
+        public double y = 0;
+        public Rotation2d rotation = new Rotation2d(0);
+
 
         // Outputs
         public double leftPercent = 0.0;
@@ -58,7 +65,7 @@ public class Chassis extends Submodule {
     private final WPI_VictorSPX mRightFollowerA = new WPI_VictorSPX(ChassisConstants.RIGHT_FOLLOWER_A_ID);
     private final WPI_VictorSPX mRightFollowerB = new WPI_VictorSPX(ChassisConstants.RIGHT_FOLLOWER_B_ID);
 
-    private final DifferentialDrive mChassis = new DifferentialDrive(mLeftLeader, mRightLeader);
+    // private final DifferentialDrive mChassis = new DifferentialDrive(mLeftLeader, mRightLeader);
 
     /** Sensors */
     private final WPI_PigeonIMU mImu = new WPI_PigeonIMU(ChassisConstants.IMU_ID);
@@ -73,10 +80,10 @@ public class Chassis extends Submodule {
     private PeriodicIO periodicIO = new PeriodicIO();
 
     /** Pneumatics */
-    private final InactiveCompressor compressor = InactiveCompressor.getInstance();
-    private final InactiveDoubleSolenoid shifter = new InactiveDoubleSolenoid(
-        ChassisConstants.SHIFTER_HIGH_TORQUE_ID, 
-        ChassisConstants.SHIFTER_LOW_TORQUE_ID);
+    // private final InactiveCompressor compressor = InactiveCompressor.getInstance();
+    // private final InactiveDoubleSolenoid shifter = new InactiveDoubleSolenoid(
+    //     ChassisConstants.SHIFTER_HIGH_TORQUE_ID, 
+    //     ChassisConstants.SHIFTER_LOW_TORQUE_ID);
 
 
     private Chassis() {}
@@ -113,6 +120,7 @@ public class Chassis extends Submodule {
         mRightFollowerB.setInverted(InvertType.FollowMaster);
 
         /** Inverts encoder */
+        mRightLeader.setSensorPhase(true);
         mLeftLeader.setSensorPhase(true);
 
         /** Sets feedback sensor */
@@ -135,10 +143,10 @@ public class Chassis extends Submodule {
 
         /** Sets velocity PID gain */
         // mLeftLeader.config_kF(ChassisConstants.PID_LOOP_IDX, ChassisConstants.LEFT_kF, Constants.TIMEOUT_MS);
-        // mLeftLeader.config_kP(ChassisConstants.PID_LOOP_IDX, ChassisConstants.LEFT_kP, Constants.TIMEOUT_MS);
+        mLeftLeader.config_kP(ChassisConstants.PID_LOOP_IDX, ChassisConstants.LEFT_kP, Constants.TIMEOUT_MS);
         // mLeftLeader.config_kD(ChassisConstants.PID_LOOP_IDX, ChassisConstants.LEFT_kD, Constants.TIMEOUT_MS);
         // mRightLeader.config_kF(ChassisConstants.PID_LOOP_IDX, ChassisConstants.RIGHT_kF, Constants.TIMEOUT_MS);
-        // mRightLeader.config_kP(ChassisConstants.PID_LOOP_IDX, ChassisConstants.RIGHT_kP, Constants.TIMEOUT_MS);
+        mRightLeader.config_kP(ChassisConstants.PID_LOOP_IDX, ChassisConstants.RIGHT_kP, Constants.TIMEOUT_MS);
         // mRightLeader.config_kD(ChassisConstants.PID_LOOP_IDX, ChassisConstants.RIGHT_kD, Constants.TIMEOUT_MS);
 
         mImu.configFactoryDefault();
@@ -155,9 +163,10 @@ public class Chassis extends Submodule {
         zero();
 
         // mOdometry = new DifferentialDriveOdometry(new Rotation2d(getHeading()));
-        mOdometry = new DifferentialDriveOdometry(new Rotation2d(getHeadingRad()));
+        mOdometry = new DifferentialDriveOdometry(periodicIO.heading);
 
-        changeShifterState(GearShift.LOW_TORQUE);
+        setBrakeMode(true);
+        // changeShifterState(GearShift.LOW_TORQUE);
     }
 
     @Override
@@ -168,33 +177,33 @@ public class Chassis extends Submodule {
 
         stop();
         zero();
+        resetOdometry(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0.0)));
     }
 
     @Override
     public void run() {
-        // switch(controlState) {
-        //     case OPEN_LOOP: 
-                mLeftLeader.set(ControlMode.PercentOutput, periodicIO.leftPercent);
-                mRightLeader.set(ControlMode.PercentOutput, periodicIO.rightPercent);
-            //     break;
-
-            // case PATH_FOLLOWING: 
-        // }
+        mLeftLeader.set(ControlMode.PercentOutput, periodicIO.leftPercent);
+        mRightLeader.set(ControlMode.PercentOutput, periodicIO.rightPercent);
     }
 
     @Override
     public void update(double timestamp) {
-        periodicIO.leftPosition = getLeftEncoderDistance();
-        periodicIO.rightPosition = getRightEncoderDistance();
+        periodicIO.leftPosition = mLeftLeader.getSelectedSensorPosition() * ChassisConstants.kEncoderDistancePerPulse;
+        periodicIO.rightPosition = mRightLeader.getSelectedSensorPosition() * ChassisConstants.kEncoderDistancePerPulse;
 
-        periodicIO.leftVelocity = getLeftVelocity();
-        periodicIO.rightVelocity = getRightVelocity();
+        periodicIO.leftVelocity = mLeftLeader.getSelectedSensorVelocity() * ChassisConstants.kEncoderDistancePerPulse * 10;
+        periodicIO.rightVelocity = mRightLeader.getSelectedSensorVelocity() * ChassisConstants.kEncoderDistancePerPulse * 10;
 
-        updateOdometry();
+        periodicIO.heading = Rotation2d.fromDegrees(rescale180(mImu.getRotation2d().getDegrees()));
+
+        Pose2d updatedPose = updateOdometry();
+        periodicIO.x = updatedPose.getX();
+        periodicIO.y = updatedPose.getY();
+        periodicIO.rotation = updatedPose.getRotation();
 
         if(controlState == ControlState.PATH_FOLLOWING) {
-            double leftVel = trajectoryFollower.update(getPose()).leftMetersPerSecond;
-            double rightVel = trajectoryFollower.update(getPose()).rightMetersPerSecond;
+            double leftVel = trajectoryFollower.update(updatedPose).leftMetersPerSecond;
+            double rightVel = trajectoryFollower.update(updatedPose).rightMetersPerSecond;
 
             /** Calculate accel */
             double leftAccel = leftVel - leftPrevVel;
@@ -202,9 +211,14 @@ public class Chassis extends Submodule {
             leftPrevVel = leftVel;
             rightPrevVel = rightVel;
 
+            SmartDashboard.putNumber("desired left vel", leftVel);
+            SmartDashboard.putNumber("desired right vel", rightVel);
+            SmartDashboard.putNumber("actual left vel", periodicIO.leftVelocity);
+            SmartDashboard.putNumber("actual right vel", periodicIO.rightVelocity);
+
             setPercentSpeed(
-                leftVelController.update(leftVel, leftAccel, getLeftVelocity()), 
-                rightVelController.update(rightVel, rightAccel, getRightVelocity()));
+                leftVelController.update(leftVel, leftAccel, periodicIO.leftVelocity), 
+                rightVelController.update(rightVel, rightAccel, periodicIO.rightVelocity));
         }
     }
 
@@ -236,60 +250,19 @@ public class Chassis extends Submodule {
      * 
      * @param shift shifter setting
      */
-    public void changeShifterState(GearShift shift) {
-        if(shift == GearShift.LOW_TORQUE) {
-            shifter.set(Value.kForward);
-        } else if(shift == GearShift.HIGH_TORQUE) {
-            shifter.set(Value.kReverse);
-        } else {
-            shifter.set(Value.kOff);
-        }
-    }
+    // public void changeShifterState(GearShift shift) {
+    //     if(shift == GearShift.LOW_TORQUE) {
+    //         shifter.set(Value.kForward);
+    //     } else if(shift == GearShift.HIGH_TORQUE) {
+    //         shifter.set(Value.kReverse);
+    //     } else {
+    //         shifter.set(Value.kOff);
+    //     }
+    // }
 
-    /**
-     * Calculates distance travelled on the left side based on encoder readings
-     * 
-     * @return distance travelled
-     */
-    public double getLeftEncoderDistance() {
-        return mLeftLeader.getSelectedSensorPosition() * ChassisConstants.kEncoderDistancePerPulse;
-    }
-
-    /**
-     * Calculates distance travelled on the left side based on encoder readings
-     * 
-     * @return distance travelled
-     */
-    public double getRightEncoderDistance() {
-        return mRightLeader.getSelectedSensorPosition() * ChassisConstants.kEncoderDistancePerPulse;
-    }
-
-    /**
-     * Returns the current wheel speeds of the robot.
-     *
-     * @return The current wheel speeds.
-     */
-    public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-        // return new DifferentialDriveWheelSpeeds(m_leftEncoder.getRate(), m_rightEncoder.getRate());
-        return new DifferentialDriveWheelSpeeds(getLeftVelocity(), getRightVelocity());
-    }
-
-    /**
-     * Returns left velocity
-     * 
-     * @return left velocity
-     */
-    private double getLeftVelocity() {
-        return mLeftLeader.getSelectedSensorVelocity() * ChassisConstants.kEncoderDistancePerPulse * 10;
-    }
-
-    /**
-     * Returns right velocity
-     * 
-     * @return right velocity
-     */
-    private double getRightVelocity() {
-        return mRightLeader.getSelectedSensorVelocity() * ChassisConstants.kEncoderDistancePerPulse * 10;
+    
+    public Pose2d getPose() {
+        return new Pose2d(periodicIO.x, periodicIO.y, periodicIO.rotation);
     }
 
     /**
@@ -300,19 +273,29 @@ public class Chassis extends Submodule {
      * @param quickTurn basically an arcade drive switch
      */
     public void curvatureDrive(double throttle, double turn, boolean quickTurn) {
-        mChassis.curvatureDrive(throttle, turn, quickTurn);
+        // Compute velocity, right stick = curvature if no quickturn, else power
+        double leftSpeed = throttle + (quickTurn ? turn : Math.abs(throttle) * turn);
+        double rightSpeed = throttle - (quickTurn ? turn : Math.abs(throttle) * turn);
+    
+        // Normalize velocity
+        double maxMagnitude = Math.max(Math.abs(leftSpeed), Math.abs(rightSpeed));
+        if (maxMagnitude > 1.0) {
+            leftSpeed /= maxMagnitude;
+            rightSpeed /= maxMagnitude;
+        }
+        periodicIO.leftPercent = leftSpeed;
+        periodicIO.rightPercent = rightSpeed;
     }
 
     /**
-     * Controls the left and right sides of the drive directly with voltages.
-     *
-     * @param leftVolts the commanded left output
-     * @param rightVolts the commanded right output
+     * Aracde drive
+     * 
+     * @param throttle forward
+     * @param turn turn
      */
-    public void tankDriveVolts(double leftVolts, double rightVolts) {
-        mLeftLeader.setVoltage(leftVolts);
-        mRightLeader.setVoltage(rightVolts);
-        mChassis.feed();
+    public void arcadeDrive(double throttle, double turn) {
+        periodicIO.leftPercent = throttle + turn;
+        periodicIO.rightPercent = throttle - turn;
     }
 
     /** Zeros all sensors */
@@ -320,7 +303,7 @@ public class Chassis extends Submodule {
     public void zero() {
         resetEncoders();
         zeroHeading();
-        resetOdometry(new Pose2d(0.0, 0.0, new Rotation2d(0.0)));
+        // resetOdometry(new Pose2d(0.0, 0.0, new Rotation2d(0.0)));
     }
 
     /** Resets drive encoders to 0 */
@@ -334,40 +317,8 @@ public class Chassis extends Submodule {
         mImu.reset();
     }
 
-    /**
-     * Gets the average distance of the two encoders.
-     *
-     * @return the average of the two encoder readings
-     */
-    public double getAverageEncoderDistance() {
-        return (mLeftLeader.getSelectedSensorPosition() + mRightLeader.getSelectedSensorPosition()) / 2.0;
-    }
-
-    /**
-     * Sets the max output of the drive. Useful for scaling the drive to drive more slowly.
-     *
-     * @param maxOutput the maximum output to which the drive will be constrained
-     */
-    public void setMaxOutput(double maxOutput) {
-        mChassis.setMaxOutput(maxOutput);
-    }
-
-    /**
-     * Returns the heading of the robot.
-     *
-     * @return the robot's heading in degrees, from -180 to 180
-     */
-    public double getHeading() {
-        return rescale180(mImu.getRotation2d().getDegrees());
-    }
-
-    /**
-     * Returns the heading of the robot in radians
-     * 
-     * @return the robot's heading in radians, from -pi to pi
-     */
-    public double getHeadingRad() {
-        return Math.toRadians(getHeading());
+    public PeriodicIO getPeriodicIO() {
+        return periodicIO;
     }
 
     /**
@@ -390,29 +341,18 @@ public class Chassis extends Submodule {
     }
 
     /**
-     * Returns the currently-estimated pose of the robot.
-     *
-     * @return The pose.
-     */
-    public Pose2d getPose() {
-        return mOdometry.getPoseMeters();
-    }
-
-    /**
      * Resets the odometry to the specified pose.
      *
      * @param pose The pose to which to set the odometry.
      */
     public void resetOdometry(Pose2d pose) {
         resetEncoders();
-        mOdometry.resetPosition(pose, new Rotation2d(getHeadingRad()));
+        mOdometry.resetPosition(pose, periodicIO.heading);
     }
 
     /** Updates odom */
-    private void updateOdometry() {
-        mOdometry.update(
-            new Rotation2d(
-                getHeadingRad()), getLeftEncoderDistance(), getRightEncoderDistance());
+    private Pose2d updateOdometry() {
+        return mOdometry.update(periodicIO.heading, periodicIO.leftPosition, periodicIO.rightPosition);
     }
 
     /**

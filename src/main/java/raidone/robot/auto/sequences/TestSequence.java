@@ -8,11 +8,8 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import raidone.robot.Constants.AutoConstants;
 import raidone.robot.auto.actions.DrivePath;
 import raidone.robot.auto.actions.SeriesAction;
-import raidone.robot.submodules.Chassis;
 
 public class TestSequence extends AutoSequence {
-    private static final Chassis chassis = Chassis.getInstance();
-
     private static final Trajectory path = PathPlanner.loadPath("TestCurve", AutoConstants.kMaxSpeedMetersPerSecond, AutoConstants.kMaxAccelerationMetersPerSecondSquared);
 
     public TestSequence() {}

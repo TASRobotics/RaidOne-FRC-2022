@@ -16,6 +16,8 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import io.github.oblarg.oblog.Logger;
+import io.github.oblarg.oblog.annotations.Config;
 import raidone.robot.Constants.ChassisConstants;
 import raidone.robot.pathing.TrajectoryFollower;
 import raidone.robot.pathing.VelocityController;
@@ -167,6 +169,8 @@ public class Chassis extends Submodule {
 
         setBrakeMode(true);
         // changeShifterState(GearShift.LOW_TORQUE);
+
+        Logger.configureLoggingAndConfig(this, false);
     }
 
     @Override
@@ -220,6 +224,17 @@ public class Chassis extends Submodule {
                 leftVelController.update(leftVel, leftAccel, periodicIO.leftVelocity), 
                 rightVelController.update(rightVel, rightAccel, periodicIO.rightVelocity));
         }
+        Logger.updateEntries();
+    }
+
+    @Config
+    public void setLeftVelocityControllerGain(double kV, double kA, double kP) {
+        leftVelController.setGain(kP, kV, kA);
+    }
+
+    @Config
+    public void setRightVelocityControllerGain(double kV, double kA, double kP) {
+        rightVelController.setGain(kP, kV, kA);
     }
 
     /** Stops the compressor and all chassis motors */

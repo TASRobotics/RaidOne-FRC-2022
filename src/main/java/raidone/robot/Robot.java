@@ -18,8 +18,6 @@ public class Robot extends TimedRobot {
 
     private static final Teleop teleop = Teleop.getInstance();
     private static final Chassis chassis = Chassis.getInstance();
-    // private static final ChassisController chassisController = ChassisController.getInstance();
-
 
     private static final Superstructure superstructure = Superstructure.getInstance();
 

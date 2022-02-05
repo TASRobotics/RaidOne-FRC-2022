@@ -1,5 +1,14 @@
 {
   "NetworkTables": {
+    "Shuffleboard": {
+      "Chassis": {
+        "open": true,
+        "setLeftVelocityControllerGain": {
+          "open": true
+        }
+      },
+      "open": true
+    },
     "SmartDashboard": {
       "open": true
     },

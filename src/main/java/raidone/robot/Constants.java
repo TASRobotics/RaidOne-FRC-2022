@@ -24,12 +24,12 @@ public final class Constants {
 
         /** Velocity PID */
         public static final int PID_LOOP_IDX = 0;
-        public static final double LEFT_kV = 0.31;
-        public static final double LEFT_kP = 0.0;
-        public static final double LEFT_kA = 0.0;
-        public static final double RIGHT_kV = 0.325;
-        public static final double RIGHT_kP = 0.0;
-        public static final double RIGHT_kA = 0.0;
+        public static final double LEFT_kV = 0.222;
+        public static final double LEFT_kP = 0.045;
+        public static final double LEFT_kA = 3.78;
+        public static final double RIGHT_kV = 0.222;
+        public static final double RIGHT_kP = 0.045;
+        public static final double RIGHT_kA = 3.78;
 
         /** Drive kinematics (for ramsete) */
         public static final double TRACK_WIDTH = 0.69;

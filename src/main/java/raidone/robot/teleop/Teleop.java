@@ -20,11 +20,9 @@ public class Teleop {
     private Teleop() {
     }
 
-
     private XboxController master = new XboxController(0);
 
     private static Chassis chassis = Chassis.getInstance();
-    // private static ChassisController chassisController = ChassisController.getInstance();
 
     /**
      * Runs at the start of teleop.
@@ -43,15 +41,13 @@ public class Teleop {
         // if(master.getLeftBumper()) chassis.changeShifterState(GearShift.HIGH_TORQUE);
         // else if(master.getRightBumper()) chassis.changeShifterState(GearShift.LOW_TORQUE);
 
-        // chassis.updateOdometry();
-
         SmartDashboard.putNumber("left enc", chassis.getPeriodicIO().leftPosition);
         SmartDashboard.putNumber("right enc", chassis.getPeriodicIO().rightPosition);
         SmartDashboard.putNumber("Pure heading", chassis.getPeriodicIO().heading.getDegrees());
         SmartDashboard.putNumber("Pure heading rad", chassis.getPeriodicIO().heading.getDegrees());
 
-        SmartDashboard.putNumber("x pose", chassis.getPose().getX());
-        SmartDashboard.putNumber("y pose", chassis.getPose().getY());
-        SmartDashboard.putNumber("rotation", chassis.getPose().getRotation().getDegrees());
+        SmartDashboard.putNumber("x pose", chassis.getPeriodicIO().x);
+        SmartDashboard.putNumber("y pose", chassis.getPeriodicIO().y);
+        SmartDashboard.putNumber("rotation", chassis.getPeriodicIO().rotation.getDegrees());
     }
 }

@@ -2,6 +2,7 @@ package raidone.robot.submodules;
 
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -21,6 +22,7 @@ import io.github.oblarg.oblog.annotations.Config;
 import raidone.robot.Constants.ChassisConstants;
 import raidone.robot.pathing.TrajectoryFollower;
 import raidone.robot.pathing.VelocityController;
+import raidone.robot.utils.JoystickUtils;
 import raidone.robot.Constants;
 
 import raidone.robot.wrappers.InactiveCompressor;
@@ -35,17 +37,31 @@ public class Chassis extends Submodule {
         public double rightPosition = 0; // in meters
         public Rotation2d heading = new Rotation2d(0);
 
-        public double leftVelocity = 0; // in m/s
-        public double rightVelocity = 0; // in m/s
+        public double actualLeftVelocity = 0; // in m/s
+        public double actualRightVelocity = 0; // in m/s
 
         public double x = 0;
         public double y = 0;
         public Rotation2d rotation = new Rotation2d(0);
 
+        // public double left_kV = 0.0;
+        // public double left_kA = 0.0;
+        // public double left_kP = 0.0;
+
+        // public double right_kV = 0.0;
+        // public double right_kA = 0.0;
+        // public double right_kP = 0.0;
+
 
         // Outputs
         public double leftPercent = 0.0;
         public double rightPercent = 0.0;
+
+        public double desiredLeftVelocity = 0.0;
+        public double desiredRightVelocity = 0.0;
+
+        public double leftFF = 0.0;
+        public double rightFF = 0.0;
     }
 
     /** Enum controlling gear shift */
@@ -107,6 +123,9 @@ public class Chassis extends Submodule {
         mRightFollowerA.configFactoryDefault();
         mRightFollowerB.configFactoryDefault();
 
+        /** Config factory default for sensors */
+        mImu.configFactoryDefault();
+
         /** Config followers */
         mLeftFollowerA.follow(mLeftLeader);
         mLeftFollowerB.follow(mLeftLeader);
@@ -143,15 +162,13 @@ public class Chassis extends Submodule {
         mRightLeader.configPeakOutputForward(1, Constants.TIMEOUT_MS);
         mRightLeader.configPeakOutputReverse(-1, Constants.TIMEOUT_MS);
 
-        /** Sets velocity PID gain */
-        // mLeftLeader.config_kF(ChassisConstants.PID_LOOP_IDX, ChassisConstants.LEFT_kF, Constants.TIMEOUT_MS);
-        mLeftLeader.config_kP(ChassisConstants.PID_LOOP_IDX, ChassisConstants.LEFT_kP, Constants.TIMEOUT_MS);
-        // mLeftLeader.config_kD(ChassisConstants.PID_LOOP_IDX, ChassisConstants.LEFT_kD, Constants.TIMEOUT_MS);
-        // mRightLeader.config_kF(ChassisConstants.PID_LOOP_IDX, ChassisConstants.RIGHT_kF, Constants.TIMEOUT_MS);
-        mRightLeader.config_kP(ChassisConstants.PID_LOOP_IDX, ChassisConstants.RIGHT_kP, Constants.TIMEOUT_MS);
-        // mRightLeader.config_kD(ChassisConstants.PID_LOOP_IDX, ChassisConstants.RIGHT_kD, Constants.TIMEOUT_MS);
-
-        mImu.configFactoryDefault();
+        /** Config Talon PID */
+        mLeftLeader.config_kP(ChassisConstants.PID_LOOP_IDX, 
+                              ChassisConstants.LEFT_kP, 
+                              Constants.TIMEOUT_MS);
+        mRightLeader.config_kP(ChassisConstants.PID_LOOP_IDX, 
+                               ChassisConstants.RIGHT_kP, 
+                               Constants.TIMEOUT_MS);
 
         /** Config after imu init */
         trajectoryFollower = new TrajectoryFollower(ChassisConstants.DRIVE_KINEMATICS);
@@ -160,11 +177,9 @@ public class Chassis extends Submodule {
         leftPrevVel = 0.0;
         rightPrevVel = 0.0;
 
-        // Reset encoders
-        // resetEncoders();
+        // Reset sensors (must happen before odom init)
         zero();
 
-        // mOdometry = new DifferentialDriveOdometry(new Rotation2d(getHeading()));
         mOdometry = new DifferentialDriveOdometry(periodicIO.heading);
 
         setBrakeMode(true);
@@ -182,12 +197,26 @@ public class Chassis extends Submodule {
         stop();
         zero();
         resetOdometry(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0.0)));
+
+        // leftVelController.setGain(periodicIO.left_kP, periodicIO.left_kV, periodicIO.left_kA);
+        // rightVelController.setGain(periodicIO.right_kP, periodicIO.right_kV, periodicIO.right_kA);
     }
 
     @Override
     public void run() {
         mLeftLeader.set(ControlMode.PercentOutput, periodicIO.leftPercent);
         mRightLeader.set(ControlMode.PercentOutput, periodicIO.rightPercent);
+
+        switch(controlState) {
+            case OPEN_LOOP:
+                mLeftLeader.set(ControlMode.PercentOutput, periodicIO.leftPercent);
+                mRightLeader.set(ControlMode.PercentOutput, periodicIO.rightPercent);
+                break;
+
+            case PATH_FOLLOWING:
+                mLeftLeader.set(ControlMode.Velocity, periodicIO.desiredLeftVelocity, DemandType.ArbitraryFeedForward, periodicIO.leftFF);
+                mRightLeader.set(ControlMode.Velocity, periodicIO.desiredRightVelocity, DemandType.ArbitraryFeedForward, periodicIO.rightFF);
+        }
     }
 
     @Override
@@ -195,8 +224,8 @@ public class Chassis extends Submodule {
         periodicIO.leftPosition = mLeftLeader.getSelectedSensorPosition() * ChassisConstants.kEncoderDistancePerPulse;
         periodicIO.rightPosition = mRightLeader.getSelectedSensorPosition() * ChassisConstants.kEncoderDistancePerPulse;
 
-        periodicIO.leftVelocity = mLeftLeader.getSelectedSensorVelocity() * ChassisConstants.kEncoderDistancePerPulse * 10;
-        periodicIO.rightVelocity = mRightLeader.getSelectedSensorVelocity() * ChassisConstants.kEncoderDistancePerPulse * 10;
+        periodicIO.actualLeftVelocity = mLeftLeader.getSelectedSensorVelocity() * ChassisConstants.kEncoderDistancePerPulse * 10;
+        periodicIO.actualRightVelocity = mRightLeader.getSelectedSensorVelocity() * ChassisConstants.kEncoderDistancePerPulse * 10;
 
         periodicIO.heading = Rotation2d.fromDegrees(rescale180(mImu.getRotation2d().getDegrees()));
 
@@ -204,6 +233,8 @@ public class Chassis extends Submodule {
         periodicIO.x = updatedPose.getX();
         periodicIO.y = updatedPose.getY();
         periodicIO.rotation = updatedPose.getRotation();
+        SmartDashboard.putNumber("actual left vel", periodicIO.actualLeftVelocity);
+        SmartDashboard.putNumber("actual right vel", periodicIO.actualRightVelocity);
 
         if(controlState == ControlState.PATH_FOLLOWING) {
             double leftVel = trajectoryFollower.update(updatedPose).leftMetersPerSecond;
@@ -217,25 +248,47 @@ public class Chassis extends Submodule {
 
             SmartDashboard.putNumber("desired left vel", leftVel);
             SmartDashboard.putNumber("desired right vel", rightVel);
-            SmartDashboard.putNumber("actual left vel", periodicIO.leftVelocity);
-            SmartDashboard.putNumber("actual right vel", periodicIO.rightVelocity);
 
-            setPercentSpeed(
-                leftVelController.update(leftVel, leftAccel, periodicIO.leftVelocity), 
-                rightVelController.update(rightVel, rightAccel, periodicIO.rightVelocity));
+            periodicIO.leftFF = leftVelController.updateFF(leftVel, leftAccel);
+            periodicIO.rightFF = rightVelController.updateFF(rightVel, rightAccel);
+
+            setVelocity(leftVel, rightVel);
+            // setPercentSpeed(
+            //     leftVelController.update(leftVel, leftAccel, periodicIO.actualLeftVelocity), 
+            //     rightVelController.update(rightVel, rightAccel, periodicIO.actualRightVelocity));
         }
         Logger.updateEntries();
     }
 
-    @Config
-    public void setLeftVelocityControllerGain(double kV, double kA, double kP) {
-        leftVelController.setGain(kP, kV, kA);
-    }
+    // @Config
+    // public void setLeft_kV(double kV) {
+    //     periodicIO.left_kV = kV;
+    // }
 
-    @Config
-    public void setRightVelocityControllerGain(double kV, double kA, double kP) {
-        rightVelController.setGain(kP, kV, kA);
-    }
+    // @Config
+    // public void setLeft_kA(double kA) {
+    //     periodicIO.left_kA = kA;
+    // }
+
+    // @Config
+    // public void setLeft_kP(double kP) {
+    //     periodicIO.left_kP = kP;
+    // }
+
+    // @Config
+    // public void setRight_kV(double kV) {
+    //     periodicIO.right_kV = kV;
+    // }
+
+    // @Config
+    // public void setRight_kA(double kA) {
+    //     periodicIO.right_kA = kA;
+    // }
+
+    // @Config
+    // public void setRight_kP(double kP) {
+    //     periodicIO.right_kP = kP;
+    // }
 
     /** Stops the compressor and all chassis motors */
     @Override
@@ -261,6 +314,18 @@ public class Chassis extends Submodule {
     }
 
     /**
+     * Sets velocity speed [-1, 1]
+     * 
+     * @param left left speed
+     * @param right right speed
+     */
+    public void setVelocity(double left, double right) {
+        
+        periodicIO.desiredLeftVelocity = left;
+        periodicIO.desiredRightVelocity = right;
+    }
+
+    /**
      * Changes the shifter state
      * 
      * @param shift shifter setting
@@ -275,11 +340,6 @@ public class Chassis extends Submodule {
     //     }
     // }
 
-    
-    public Pose2d getPose() {
-        return new Pose2d(periodicIO.x, periodicIO.y, periodicIO.rotation);
-    }
-
     /**
      * A better arcade drive
      * 
@@ -288,6 +348,10 @@ public class Chassis extends Submodule {
      * @param quickTurn basically an arcade drive switch
      */
     public void curvatureDrive(double throttle, double turn, boolean quickTurn) {
+        /** Set deadband to all inputs */
+        JoystickUtils.deadband(throttle);
+        JoystickUtils.deadband(turn);
+
         // Compute velocity, right stick = curvature if no quickturn, else power
         double leftSpeed = throttle + (quickTurn ? turn : Math.abs(throttle) * turn);
         double rightSpeed = throttle - (quickTurn ? turn : Math.abs(throttle) * turn);
@@ -318,7 +382,6 @@ public class Chassis extends Submodule {
     public void zero() {
         resetEncoders();
         zeroHeading();
-        // resetOdometry(new Pose2d(0.0, 0.0, new Rotation2d(0.0)));
     }
 
     /** Resets drive encoders to 0 */
@@ -332,6 +395,11 @@ public class Chassis extends Submodule {
         mImu.reset();
     }
 
+    /**
+     * Returns Periodic IO
+     * 
+     * @return current periodic io
+     */
     public PeriodicIO getPeriodicIO() {
         return periodicIO;
     }
@@ -344,15 +412,6 @@ public class Chassis extends Submodule {
      */
     private double rescale180(double angle) {
         return angle - 360.0 * Math.floor((angle + 180.0) * (1.0 / 360.0));
-    }
-
-    /**
-     * Returns the turn rate of the robot.
-     *
-     * @return The turn rate of the robot, in degrees per second
-     */
-    public double getTurnRate() {
-        return -mImu.getRate();
     }
 
     /**

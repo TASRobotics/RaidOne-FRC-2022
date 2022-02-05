@@ -47,4 +47,16 @@ public class VelocityController {
         feedBack = kP * (velMPS - measuredVel);
         return feedForward + feedBack;
     }
+
+    /**
+     * Updates with corrected velocity based on FF
+     * 
+     * @param velMPS measured velocity
+     * @param accelMPS measured acceleration
+     * @return updated velocity
+     */
+    public double updateFF(double velMPS, double accelMPS) {
+        feedForward = kV * velMPS + kA * accelMPS;
+        return feedForward;
+    }
 }

@@ -17,8 +17,8 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import io.github.oblarg.oblog.Logger;
-import io.github.oblarg.oblog.annotations.Config;
+// import io.github.oblarg.oblog.Logger;
+// import io.github.oblarg.oblog.annotations.Config;
 import raidone.robot.Constants.ChassisConstants;
 import raidone.robot.pathing.TrajectoryFollower;
 import raidone.robot.pathing.VelocityController;
@@ -185,7 +185,7 @@ public class Chassis extends Submodule {
         setBrakeMode(true);
         // changeShifterState(GearShift.LOW_TORQUE);
 
-        Logger.configureLoggingAndConfig(this, false);
+        // Logger.configureLoggingAndConfig(this, false);
     }
 
     @Override
@@ -255,9 +255,9 @@ public class Chassis extends Submodule {
             setVelocity(leftVel, rightVel);
             // setPercentSpeed(
             //     leftVelController.update(leftVel, leftAccel, periodicIO.actualLeftVelocity), 
-            //     rightVelController.update(rightVel, rightAccel, periodicIO.actualRightVelocity));
+            //       rightVelController.update(rightVel, rightAccel, periodicIO.actualRightVelocity));
         }
-        Logger.updateEntries();
+        // Logger.updateEntries();
     }
 
     // @Config
@@ -375,6 +375,17 @@ public class Chassis extends Submodule {
     public void arcadeDrive(double throttle, double turn) {
         periodicIO.leftPercent = throttle + turn;
         periodicIO.rightPercent = throttle - turn;
+    }
+
+    /**
+     * Tank drive
+     * 
+     * @param left percent speed
+     * @param right percent speed
+     */
+    public void tankDrive(double left, double right) {
+        periodicIO.leftPercent = left;
+        periodicIO.rightPercent = right;
     }
 
     /** Zeros all sensors */

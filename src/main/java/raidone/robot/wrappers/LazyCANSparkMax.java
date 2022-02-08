@@ -1,24 +1,24 @@
-package raidone.robot.wrappers;
+// package raidone.robot.wrappers;
 
-import com.revrobotics.CANSparkMax;
+// import com.revrobotics.CANSparkMax;
 
-public class LazyCANSparkMax extends CANSparkMax {
+// public class LazyCANSparkMax extends CANSparkMax {
     
-    protected double prevVal = 0;
+//     protected double prevVal = 0;
 
-    public LazyCANSparkMax(int deviceNumber, MotorType type) {
-        super(deviceNumber, type);
-    }
+//     public LazyCANSparkMax(int deviceNumber, MotorType type) {
+//         super(deviceNumber, type);
+//     }
 
-    public double getLastSet() {
-        return prevVal;
-    }
+//     public double getLastSet() {
+//         return prevVal;
+//     }
 
-    @Override
-    public void set(double value) {
-        if (value != prevVal) {
-            prevVal = value;
-            super.set(value);
-        }
-    }
-}
+//     @Override
+//     public void set(double value) {
+//         if (value != prevVal) {
+//             prevVal = value;
+//             super.set(value);
+//         }
+//     }
+// }

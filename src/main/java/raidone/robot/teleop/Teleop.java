@@ -4,10 +4,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import raidone.robot.Constants;
 import raidone.robot.submodules.Chassis;
-<<<<<<< HEAD
 import raidone.robot.submodules.Intake;
-=======
->>>>>>> aae4a974c2517aafe6af7ff8edec645e0427f4a6
 import raidone.robot.submodules.Chassis.GearShift;
 
 public class Teleop {
@@ -27,10 +24,7 @@ public class Teleop {
     private XboxController master = new XboxController(0);
 
     private static Chassis chassis = Chassis.getInstance();
-<<<<<<< HEAD
     private static Intake intake = Intake.getInstance();
-=======
->>>>>>> aae4a974c2517aafe6af7ff8edec645e0427f4a6
 
     /**
      * Runs at the start of teleop.

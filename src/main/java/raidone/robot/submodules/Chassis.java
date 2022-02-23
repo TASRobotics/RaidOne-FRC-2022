@@ -17,13 +17,8 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-<<<<<<< HEAD
-import io.github.oblarg.oblog.Logger;
-import io.github.oblarg.oblog.annotations.Config;
-=======
 // import io.github.oblarg.oblog.Logger;
 // import io.github.oblarg.oblog.annotations.Config;
->>>>>>> aae4a974c2517aafe6af7ff8edec645e0427f4a6
 import raidone.robot.Constants.ChassisConstants;
 import raidone.robot.pathing.TrajectoryFollower;
 import raidone.robot.pathing.VelocityController;
@@ -103,17 +98,10 @@ public class Chassis extends Submodule {
     private PeriodicIO periodicIO = new PeriodicIO();
 
     /** Pneumatics */
-<<<<<<< HEAD
     private final InactiveCompressor compressor = InactiveCompressor.getInstance();
     private final InactiveDoubleSolenoid shifter = new InactiveDoubleSolenoid(
         ChassisConstants.SHIFTER_HIGH_TORQUE_ID, 
         ChassisConstants.SHIFTER_LOW_TORQUE_ID);
-=======
-    // private final InactiveCompressor compressor = InactiveCompressor.getInstance();
-    // private final InactiveDoubleSolenoid shifter = new InactiveDoubleSolenoid(
-    //     ChassisConstants.SHIFTER_HIGH_TORQUE_ID, 
-    //     ChassisConstants.SHIFTER_LOW_TORQUE_ID);
->>>>>>> aae4a974c2517aafe6af7ff8edec645e0427f4a6
 
 
     private Chassis() {}
@@ -195,15 +183,9 @@ public class Chassis extends Submodule {
         mOdometry = new DifferentialDriveOdometry(periodicIO.heading);
 
         setBrakeMode(true);
-<<<<<<< HEAD
         changeShifterState(GearShift.LOW_TORQUE);
 
-        Logger.configureLoggingAndConfig(this, false);
-=======
-        // changeShifterState(GearShift.LOW_TORQUE);
-
         // Logger.configureLoggingAndConfig(this, false);
->>>>>>> aae4a974c2517aafe6af7ff8edec645e0427f4a6
     }
 
     @Override
@@ -273,15 +255,9 @@ public class Chassis extends Submodule {
             setVelocity(leftVel, rightVel);
             // setPercentSpeed(
             //     leftVelController.update(leftVel, leftAccel, periodicIO.actualLeftVelocity), 
-<<<<<<< HEAD
-            //     rightVelController.update(rightVel, rightAccel, periodicIO.actualRightVelocity));
-        }
-        Logger.updateEntries();
-=======
             //       rightVelController.update(rightVel, rightAccel, periodicIO.actualRightVelocity));
         }
         // Logger.updateEntries();
->>>>>>> aae4a974c2517aafe6af7ff8edec645e0427f4a6
     }
 
     // @Config
@@ -354,7 +330,6 @@ public class Chassis extends Submodule {
      * 
      * @param shift shifter setting
      */
-<<<<<<< HEAD
     public void changeShifterState(GearShift shift) {
         if(shift == GearShift.LOW_TORQUE) {
             shifter.set(Value.kForward);
@@ -364,17 +339,6 @@ public class Chassis extends Submodule {
             shifter.set(Value.kOff);
         }
     }
-=======
-    // public void changeShifterState(GearShift shift) {
-    //     if(shift == GearShift.LOW_TORQUE) {
-    //         shifter.set(Value.kForward);
-    //     } else if(shift == GearShift.HIGH_TORQUE) {
-    //         shifter.set(Value.kReverse);
-    //     } else {
-    //         shifter.set(Value.kOff);
-    //     }
-    // }
->>>>>>> aae4a974c2517aafe6af7ff8edec645e0427f4a6
 
     /**
      * A better arcade drive

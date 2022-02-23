@@ -19,7 +19,10 @@ public class Robot extends TimedRobot {
 
     private static final Teleop teleop = Teleop.getInstance();
     private static final Chassis chassis = Chassis.getInstance();
+<<<<<<< HEAD
     private static final Intake intake = Intake.getInstance();
+=======
+>>>>>>> aae4a974c2517aafe6af7ff8edec645e0427f4a6
 
     private static final Superstructure superstructure = Superstructure.getInstance();
 
@@ -33,8 +36,12 @@ public class Robot extends TimedRobot {
         // Register all submodules here
         submoduleManager.setSubmodules(
             superstructure, 
+<<<<<<< HEAD
             chassis, 
             intake
+=======
+            chassis
+>>>>>>> aae4a974c2517aafe6af7ff8edec645e0427f4a6
             // chassisController
         );
         submoduleManager.onInit();

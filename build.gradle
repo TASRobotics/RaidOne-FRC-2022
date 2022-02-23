@@ -1,8 +1,6 @@
-import edu.wpi.first.gradlerio.deploy.roborio.RoboRIO
-
 plugins {
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2022.1.1"
+    id "edu.wpi.first.GradleRIO" version "2022.3.1"
 }
 
 sourceCompatibility = JavaVersion.VERSION_11
@@ -49,6 +47,7 @@ def includeDesktopSupport = false
 
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
 // Also defines JUnit 4.
+<<<<<<< HEAD
 repositories {
     maven { url 'https://jitpack.io' }
 }
@@ -56,6 +55,9 @@ repositories {
 dependencies {
     implementation "com.github.Oblarg:Oblog:4.0.9"
 
+=======
+dependencies {
+>>>>>>> aae4a974c2517aafe6af7ff8edec645e0427f4a6
     implementation wpi.java.deps.wpilib()
     implementation wpi.java.vendor.java()
 
@@ -73,7 +75,11 @@ dependencies {
     nativeRelease wpi.java.vendor.jniRelease(wpi.platforms.desktop)
     simulationRelease wpi.sim.enableRelease()
 
+<<<<<<< HEAD
     testImplementation 'junit:junit:4.12'
+=======
+    testImplementation 'junit:junit:4.13.1'
+>>>>>>> aae4a974c2517aafe6af7ff8edec645e0427f4a6
 }
 
 // Simulation configuration (e.g. environment variables).

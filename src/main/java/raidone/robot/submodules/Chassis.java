@@ -98,10 +98,10 @@ public class Chassis extends Submodule {
     private PeriodicIO periodicIO = new PeriodicIO();
 
     /** Pneumatics */
-    // private final InactiveCompressor compressor = InactiveCompressor.getInstance();
-    // private final InactiveDoubleSolenoid shifter = new InactiveDoubleSolenoid(
-    //     ChassisConstants.SHIFTER_HIGH_TORQUE_ID, 
-    //     ChassisConstants.SHIFTER_LOW_TORQUE_ID);
+    private final InactiveCompressor compressor = InactiveCompressor.getInstance();
+    private final InactiveDoubleSolenoid shifter = new InactiveDoubleSolenoid(
+        ChassisConstants.SHIFTER_HIGH_TORQUE_ID, 
+        ChassisConstants.SHIFTER_LOW_TORQUE_ID);
 
 
     private Chassis() {}
@@ -183,7 +183,7 @@ public class Chassis extends Submodule {
         mOdometry = new DifferentialDriveOdometry(periodicIO.heading);
 
         setBrakeMode(true);
-        // changeShifterState(GearShift.LOW_TORQUE);
+        changeShifterState(GearShift.LOW_TORQUE);
 
         Logger.configureLoggingAndConfig(this, false);
     }
@@ -330,15 +330,15 @@ public class Chassis extends Submodule {
      * 
      * @param shift shifter setting
      */
-    // public void changeShifterState(GearShift shift) {
-    //     if(shift == GearShift.LOW_TORQUE) {
-    //         shifter.set(Value.kForward);
-    //     } else if(shift == GearShift.HIGH_TORQUE) {
-    //         shifter.set(Value.kReverse);
-    //     } else {
-    //         shifter.set(Value.kOff);
-    //     }
-    // }
+    public void changeShifterState(GearShift shift) {
+        if(shift == GearShift.LOW_TORQUE) {
+            shifter.set(Value.kForward);
+        } else if(shift == GearShift.HIGH_TORQUE) {
+            shifter.set(Value.kReverse);
+        } else {
+            shifter.set(Value.kOff);
+        }
+    }
 
     /**
      * A better arcade drive

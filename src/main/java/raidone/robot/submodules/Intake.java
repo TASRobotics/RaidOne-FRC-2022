@@ -4,7 +4,6 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import raidone.robot.Constants.IntakeConstants;
-import raidone.robot.submodules.Chassis.PeriodicIO;
 import raidone.robot.wrappers.InactiveDoubleSolenoid;
 import raidone.robot.wrappers.LazyCANSparkMax;
 

@@ -38,15 +38,44 @@ public class Teleop {
     /**
      * Continuously loops in teleop.
      */
+    boolean shiftState = false, prevShiftState = false, driveState = false, prevDriveState = false;
+    int drive = 0;
+    boolean shift = false;
+    String message = "";
     public void onLoop() {
         chassis.curvatureDrive(-master.getRawAxis(1), master.getRawAxis(2), Math.abs(master.getRawAxis(1)) < Constants.DEADBAND);
-        // if(master.getLeftBumper()) chassis.changeShifterState(GearShift.HIGH_TORQUE);
-        // else if(master.getRightBumper()) chassis.changeShifterState(GearShift.LOW_TORQUE);
+        shiftState = master.getLeftBumper();
+        if(shiftState && !prevShiftState) {
+            shift = !shift;
+        }
+        if(shift) {
+            chassis.changeShifterState(GearShift.LOW_TORQUE);
+        } else {
+            chassis.changeShifterState(GearShift.HIGH_TORQUE);
+        }
+        prevShiftState = shiftState;
+        SmartDashboard.putBoolean("Shift state", shift);
 
-        SmartDashboard.putNumber("left enc", chassis.getPeriodicIO().leftPosition);
-        SmartDashboard.putNumber("right enc", chassis.getPeriodicIO().rightPosition);
-        SmartDashboard.putNumber("Pure heading", chassis.getPeriodicIO().heading.getDegrees());
-        SmartDashboard.putNumber("Pure heading rad", chassis.getPeriodicIO().heading.getDegrees());
+        driveState = master.getAButton();
+        if(driveState && !prevDriveState) {
+            drive++;
+        }
+        switch(drive %= 3) {
+            case 0: 
+                chassis.curvatureDrive(-master.getRawAxis(1), master.getRawAxis(4), Math.abs(master.getRawAxis(1)) < Constants.DEADBAND);
+                message = "Curvature Drive";
+                break;
+            case 1:
+                chassis.tankDrive(-master.getRawAxis(1), -master.getRawAxis(5));
+                message = "Tank Drive";
+                break;
+            case 2:
+                chassis.arcadeDrive(-master.getRawAxis(1), master.getRawAxis(4));
+                message = "Arcade Drive";
+                break;
+        }
+        prevDriveState = driveState;
+        SmartDashboard.putString("Drive type", message);
 
         SmartDashboard.putNumber("x pose", chassis.getPeriodicIO().x);
         SmartDashboard.putNumber("y pose", chassis.getPeriodicIO().y);

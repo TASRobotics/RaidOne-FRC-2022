@@ -72,6 +72,14 @@ public final class Constants {
         public static final int SOLENOID_UP_ID = 1;
     }
 
+    public static final class EZClimbConstants {
+        public static final int LEFT_LEADER_ID = 0;
+        public static final int RIGHT_FOLLOWER_ID = 0;
+
+        public static final int SOLENOID_DOWN_ID = 0;
+        public static final int SOLENOID_UP_ID = 1;
+    }
+
     public static final class OIConstants {
         /** Controller constants */
         public static final int kDriverControllerPort = 0;

@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import raidone.robot.Constants.IntakeConstants;
+import raidone.robot.utils.JoystickUtils;
 import raidone.robot.wrappers.InactiveDoubleSolenoid;
 import raidone.robot.wrappers.LazyCANSparkMax;
 
@@ -13,7 +14,7 @@ public class Intake extends Submodule {
     }
 
     public static enum IntakeState {
-        DOWN, UP;
+        DOWN, UP, OFF;
     }
 
     /** Motors */
@@ -86,6 +87,21 @@ public class Intake extends Submodule {
             case UP:
                 solenoid.set(Value.kReverse);
                 break;
+            case OFF:
+                solenoid.set(Value.kOff);
+                break;
         }
+    }
+
+    public void autoSet(double speed) {
+        speed = JoystickUtils.deadband(speed);
+        if(speed > 0.0) {
+            setState(IntakeState.UP);
+        } else if(speed < 0.0) {
+            setState(IntakeState.DOWN);
+        } else {
+            setState(IntakeState.OFF);
+        }
+        setPercentSpeed(speed);
     }
 }

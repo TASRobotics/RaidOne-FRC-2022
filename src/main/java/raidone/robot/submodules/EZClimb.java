@@ -5,6 +5,8 @@ import com.ctre.phoenix.motorcontrol.InvertType;
 
 import raidone.robot.Constants.EZClimbConstants;
 import raidone.robot.submodules.Chassis.PeriodicIO;
+import raidone.robot.utils.JoystickUtils;
+import raidone.robot.wrappers.InactiveDoubleSolenoid;
 import raidone.robot.wrappers.LazyTalonFX;
 
 public class EZClimb extends Submodule {
@@ -12,9 +14,17 @@ public class EZClimb extends Submodule {
         public double desiredSpeed = 0.0;
     }
 
+    public static enum EZClimbState {
+        DOWN, UP, OFF;
+    }
+
     /** Motors */
     private static final LazyTalonFX mLeftLeader = new LazyTalonFX(EZClimbConstants.LEFT_LEADER_ID);
     private static final LazyTalonFX mRightFollower = new LazyTalonFX(EZClimbConstants.RIGHT_FOLLOWER_ID);
+
+    /** Pneumatics */
+    private static final InactiveDoubleSolenoid solenoid = new InactiveDoubleSolenoid(
+        EZClimbConstants.SOLENOID_DOWN_ID, EZClimbConstants.SOLENOID_UP_ID);
 
     private PeriodicIO periodicIO = new PeriodicIO();
 
@@ -58,5 +68,21 @@ public class EZClimb extends Submodule {
 
     public void setSpeeed(double speed) {
         periodicIO.desiredSpeed = speed;
+    }
+
+    public void setState(EZClimbState state) {
+        switch(state) {
+            case DOWN:
+                solenoid.set(InactiveDoubleSolenoid.Value.kForward);
+                break;
+
+            case UP:
+                solenoid.set(InactiveDoubleSolenoid.Value.kReverse);
+                break;
+
+            case OFF:
+                solenoid.set(InactiveDoubleSolenoid.Value.kOff);
+                break;
+        }
     }
 }

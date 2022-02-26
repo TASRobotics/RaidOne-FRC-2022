@@ -15,12 +15,12 @@ public class EZClimb extends Submodule {
     }
 
     public static enum EZClimbState {
-        DOWN, UP, OFF;
+        UP, OFF, DOWN;
     }
 
     /** Motors */
-    private static final LazyTalonFX mLeftLeader = new LazyTalonFX(EZClimbConstants.LEFT_LEADER_ID);
-    private static final LazyTalonFX mRightFollower = new LazyTalonFX(EZClimbConstants.RIGHT_FOLLOWER_ID);
+    private static final LazyTalonFX mLeft = new LazyTalonFX(EZClimbConstants.LEFT_ID);
+    private static final LazyTalonFX mRight = new LazyTalonFX(EZClimbConstants.RIGHT_ID);
 
     /** Pneumatics */
     private static final InactiveDoubleSolenoid solenoid = new InactiveDoubleSolenoid(
@@ -39,13 +39,14 @@ public class EZClimb extends Submodule {
 
     @Override
     public void onInit() {
-        mLeftLeader.configFactoryDefault();
-        mRightFollower.configFactoryDefault();
+        mLeft.configFactoryDefault();
+        mRight.configFactoryDefault();
 
-        mRightFollower.follow(mLeftLeader);
+        // mRightFollower.follow(mLeftLeader);
 
-        mLeftLeader.setInverted(InvertType.None);
-        mRightFollower.setInverted(InvertType.OpposeMaster);
+        mLeft.setInverted(false);
+        mRight.setInverted(true);
+        // mRightFollower.setInverted(InvertType.OpposeMaster);
     }
 
     @Override
@@ -57,31 +58,34 @@ public class EZClimb extends Submodule {
 
     @Override
     public void run() {
-        mLeftLeader.set(ControlMode.PercentOutput, periodicIO.desiredSpeed);
+        // mLeft.set(ControlMode.PercentOutput, periodicIO.desiredSpeed);
+        mRight.set(ControlMode.PercentOutput, periodicIO.desiredSpeed);
+        // mRightFollower.set(ControlMode.PercentOutput, periodicIO.desiredSpeed);
     }
 
     @Override
     public void stop() {
         periodicIO.desiredSpeed = 0.0;
-        mLeftLeader.set(ControlMode.Disabled, 0.0);
+        mLeft.set(ControlMode.Disabled, 0.0);
+        mRight.set(ControlMode.Disabled, 0.0);
     }
 
-    public void setSpeeed(double speed) {
-        periodicIO.desiredSpeed = speed;
+    public void setSpeed(double speed) {
+        periodicIO.desiredSpeed = Math.abs(speed);
     }
 
     public void setState(EZClimbState state) {
         switch(state) {
-            case DOWN:
-                solenoid.set(InactiveDoubleSolenoid.Value.kForward);
-                break;
-
             case UP:
-                solenoid.set(InactiveDoubleSolenoid.Value.kReverse);
+                solenoid.set(InactiveDoubleSolenoid.Value.kForward);
                 break;
 
             case OFF:
                 solenoid.set(InactiveDoubleSolenoid.Value.kOff);
+                break;
+
+            case DOWN:
+                solenoid.set(InactiveDoubleSolenoid.Value.kReverse);
                 break;
         }
     }

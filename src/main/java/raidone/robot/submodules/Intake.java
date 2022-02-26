@@ -1,5 +1,6 @@
 package raidone.robot.submodules;
 
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -41,10 +42,10 @@ public class Intake extends Submodule {
         mLeftLeader.restoreFactoryDefaults();
         mRightFollower.restoreFactoryDefaults();
 
-        mRightFollower.follow(mLeftLeader);
-
         mLeftLeader.setInverted(false);
         mRightFollower.setInverted(true);
+
+        setBrakeMode(IdleMode.kBrake);
     }
 
     @Override
@@ -57,12 +58,13 @@ public class Intake extends Submodule {
     @Override
     public void run() {
         mLeftLeader.set(periodicIO.desiredIntakeSpeed);
+        mRightFollower.set(periodicIO.desiredIntakeSpeed);
     }
 
     @Override
     public void stop() {
         periodicIO.desiredIntakeSpeed = 0.0;
-        setState(IntakeState.UP);
+        // setState(IntakeState.UP);
     }
 
     /**
@@ -95,13 +97,16 @@ public class Intake extends Submodule {
 
     public void autoSet(double speed) {
         speed = JoystickUtils.deadband(speed);
-        if(speed > 0.0) {
-            setState(IntakeState.UP);
-        } else if(speed < 0.0) {
+        if(Math.abs(speed) > 0.0) {
             setState(IntakeState.DOWN);
         } else {
-            setState(IntakeState.OFF);
+            setState(IntakeState.UP);
         }
         setPercentSpeed(speed);
+    }
+
+    public void setBrakeMode(IdleMode brake) {
+        mLeftLeader.setIdleMode(brake);
+        mRightFollower.setIdleMode(brake);
     }
 }

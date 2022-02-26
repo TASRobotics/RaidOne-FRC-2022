@@ -8,8 +8,10 @@ import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.ctre.phoenix.sensors.WPI_Pigeon2;
 import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
@@ -86,9 +88,12 @@ public class Chassis extends Submodule {
     // private final DifferentialDrive mChassis = new DifferentialDrive(mLeftLeader, mRightLeader);
 
     /** Sensors */
-    private final WPI_PigeonIMU mImu = new WPI_PigeonIMU(ChassisConstants.IMU_ID);
+    // private final WPI_PigeonIMU mImu = new WPI_PigeonIMU2(ChassisConstants.IMU_ID);
+    private final WPI_Pigeon2 mImu= new WPI_Pigeon2(ChassisConstants.IMU_ID);
 
     /** Controllers */
+    // private final SlewRateLimiter slew = new SlewRateLimiter(ChassisConstants.SLEW_RATE_LIMIT);
+    // private boolean slewMode = false;
     private DifferentialDriveOdometry mOdometry;
     private TrajectoryFollower trajectoryFollower;
     private VelocityController leftVelController, rightVelController;
@@ -98,7 +103,7 @@ public class Chassis extends Submodule {
     private PeriodicIO periodicIO = new PeriodicIO();
 
     /** Pneumatics */
-    private final InactiveCompressor compressor = InactiveCompressor.getInstance();
+    private InactiveCompressor compressor;
     private final InactiveDoubleSolenoid shifter = new InactiveDoubleSolenoid(
         ChassisConstants.SHIFTER_HIGH_TORQUE_ID, 
         ChassisConstants.SHIFTER_LOW_TORQUE_ID);
@@ -115,6 +120,7 @@ public class Chassis extends Submodule {
 
     @Override
     public void onInit() {
+        compressor = InactiveCompressor.getInstance();
         /** Config factory default for all motors */
         mLeftLeader.configFactoryDefault();
         mLeftFollowerA.configFactoryDefault();
@@ -133,10 +139,10 @@ public class Chassis extends Submodule {
         mRightFollowerB.follow(mRightLeader);
 
         /** Inverts motors */
-        mLeftLeader.setInverted(false);
+        mLeftLeader.setInverted(true);
         mLeftFollowerA.setInverted(InvertType.FollowMaster);
         mLeftFollowerB.setInverted(InvertType.FollowMaster);
-        mRightLeader.setInverted(true);
+        mRightLeader.setInverted(false);
         mRightFollowerA.setInverted(InvertType.FollowMaster);
         mRightFollowerB.setInverted(InvertType.FollowMaster);
 
@@ -198,6 +204,8 @@ public class Chassis extends Submodule {
         zero();
         resetOdometry(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0.0)));
 
+        changeShifterState(GearShift.LOW_TORQUE);
+
         // leftVelController.setGain(periodicIO.left_kP, periodicIO.left_kV, periodicIO.left_kA);
         // rightVelController.setGain(periodicIO.right_kP, periodicIO.right_kV, periodicIO.right_kA);
     }
@@ -209,6 +217,10 @@ public class Chassis extends Submodule {
 
         switch(controlState) {
             case OPEN_LOOP:
+                // if(slewMode) {
+                //     mLeftLeader.set(ControlMode.PercentOutput, periodicIO.leftPercent);
+                //     mRightLeader.set(ControlMode.PercentOutput, periodicIO.rightPercent);
+                // }
                 mLeftLeader.set(ControlMode.PercentOutput, periodicIO.leftPercent);
                 mRightLeader.set(ControlMode.PercentOutput, periodicIO.rightPercent);
                 break;
@@ -235,10 +247,14 @@ public class Chassis extends Submodule {
         periodicIO.rotation = updatedPose.getRotation();
         SmartDashboard.putNumber("actual left vel", periodicIO.actualLeftVelocity);
         SmartDashboard.putNumber("actual right vel", periodicIO.actualRightVelocity);
+        SmartDashboard.putNumber("heading", periodicIO.heading.getDegrees());
+
 
         if(controlState == ControlState.PATH_FOLLOWING) {
             double leftVel = trajectoryFollower.update(updatedPose).leftMetersPerSecond;
             double rightVel = trajectoryFollower.update(updatedPose).rightMetersPerSecond;
+            // double rightVel = trajectoryFollower.update(updatedPose).leftMetersPerSecond;
+            // double leftVel = trajectoryFollower.update(updatedPose).rightMetersPerSecond;
 
             /** Calculate accel */
             double leftAccel = leftVel - leftPrevVel;
@@ -300,6 +316,8 @@ public class Chassis extends Submodule {
 
         mLeftLeader.set(ControlMode.Disabled, 0.0);
         mRightLeader.set(ControlMode.Disabled, 0.0);
+
+        compressor.changeState();
     }
 
     /**
@@ -332,9 +350,9 @@ public class Chassis extends Submodule {
      */
     public void changeShifterState(GearShift shift) {
         if(shift == GearShift.LOW_TORQUE) {
-            shifter.set(Value.kForward);
-        } else if(shift == GearShift.HIGH_TORQUE) {
             shifter.set(Value.kReverse);
+        } else if(shift == GearShift.HIGH_TORQUE) {
+            shifter.set(Value.kForward);
         } else {
             shifter.set(Value.kOff);
         }
@@ -349,8 +367,11 @@ public class Chassis extends Submodule {
      */
     public void curvatureDrive(double throttle, double turn, boolean quickTurn) {
         /** Set deadband to all inputs */
-        JoystickUtils.deadband(throttle);
-        JoystickUtils.deadband(turn);
+        // throttle = JoystickUtils.deadband(JoystickUtils.monomialScale(throttle, ChassisConstants.MONOMIAL_SCALE, 1));
+        // turn = JoystickUtils.deadband(JoystickUtils.monomialScale(turn, ChassisConstants.MONOMIAL_SCALE, 1));
+
+        throttle = JoystickUtils.deadband(throttle);
+        turn = JoystickUtils.deadband(turn);
 
         // Compute velocity, right stick = curvature if no quickturn, else power
         double leftSpeed = throttle + (quickTurn ? turn : Math.abs(throttle) * turn);
@@ -373,6 +394,8 @@ public class Chassis extends Submodule {
      * @param turn turn
      */
     public void arcadeDrive(double throttle, double turn) {
+        throttle = JoystickUtils.deadband(JoystickUtils.monomialScale(throttle, ChassisConstants.MONOMIAL_SCALE, 1));
+        turn = JoystickUtils.deadband(JoystickUtils.monomialScale(turn, ChassisConstants.MONOMIAL_SCALE, 1));
         periodicIO.leftPercent = throttle + turn;
         periodicIO.rightPercent = throttle - turn;
     }
@@ -384,6 +407,8 @@ public class Chassis extends Submodule {
      * @param right percent speed
      */
     public void tankDrive(double left, double right) {
+        left = JoystickUtils.deadband(JoystickUtils.monomialScale(left, ChassisConstants.MONOMIAL_SCALE, 1));
+        right = JoystickUtils.deadband(JoystickUtils.monomialScale(right, ChassisConstants.MONOMIAL_SCALE, 1));
         periodicIO.leftPercent = left;
         periodicIO.rightPercent = right;
     }
@@ -485,4 +510,8 @@ public class Chassis extends Submodule {
         }
         return trajectoryFollower.isFinished();
     }
+
+    // public void setSlew(boolean mode) {
+    //     slewMode = mode;
+    // }
 }

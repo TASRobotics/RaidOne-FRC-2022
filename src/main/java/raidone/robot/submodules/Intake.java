@@ -64,7 +64,7 @@ public class Intake extends Submodule {
     @Override
     public void stop() {
         periodicIO.desiredIntakeSpeed = 0.0;
-        // setState(IntakeState.UP);
+        setState(IntakeState.UP);
     }
 
     /**
@@ -95,6 +95,14 @@ public class Intake extends Submodule {
         }
     }
 
+    /**
+     * Automatically controls the state of the intake & intake 
+     * speed based on desired intake speed. Thus, any double
+     * larger than abs(0.06 - deadband) will cause the intake 
+     * to deploy and spin the intake at the desired speed.
+     * 
+     * @param speed desired speed
+     */
     public void autoSet(double speed) {
         speed = JoystickUtils.deadband(speed);
         if(Math.abs(speed) > 0.0) {
@@ -105,6 +113,11 @@ public class Intake extends Submodule {
         setPercentSpeed(speed);
     }
 
+    /**
+     * Sets brake type
+     * 
+     * @param brake idle mode
+     */
     public void setBrakeMode(IdleMode brake) {
         mLeftLeader.setIdleMode(brake);
         mRightFollower.setIdleMode(brake);

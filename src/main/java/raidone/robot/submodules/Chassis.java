@@ -9,9 +9,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
-import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
@@ -85,10 +83,8 @@ public class Chassis extends Submodule {
     private final WPI_VictorSPX mRightFollowerA = new WPI_VictorSPX(ChassisConstants.RIGHT_FOLLOWER_A_ID);
     private final WPI_VictorSPX mRightFollowerB = new WPI_VictorSPX(ChassisConstants.RIGHT_FOLLOWER_B_ID);
 
-    // private final DifferentialDrive mChassis = new DifferentialDrive(mLeftLeader, mRightLeader);
 
     /** Sensors */
-    // private final WPI_PigeonIMU mImu = new WPI_PigeonIMU2(ChassisConstants.IMU_ID);
     private final WPI_Pigeon2 mImu= new WPI_Pigeon2(ChassisConstants.IMU_ID);
 
     /** Controllers */
@@ -107,7 +103,6 @@ public class Chassis extends Submodule {
     private final InactiveDoubleSolenoid shifter = new InactiveDoubleSolenoid(
         ChassisConstants.SHIFTER_HIGH_TORQUE_ID, 
         ChassisConstants.SHIFTER_LOW_TORQUE_ID);
-
 
     private Chassis() {}
     private static Chassis instance = null;

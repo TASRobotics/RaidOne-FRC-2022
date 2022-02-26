@@ -1,11 +1,8 @@
 package raidone.robot.submodules;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.InvertType;
 
 import raidone.robot.Constants.EZClimbConstants;
-import raidone.robot.submodules.Chassis.PeriodicIO;
-import raidone.robot.utils.JoystickUtils;
 import raidone.robot.wrappers.InactiveDoubleSolenoid;
 import raidone.robot.wrappers.LazyTalonFX;
 
@@ -70,10 +67,21 @@ public class EZClimb extends Submodule {
         mRight.set(ControlMode.Disabled, 0.0);
     }
 
+    /**
+     * Sets the speed of EZClimb - it is physically 
+     * impossible to turn it the other way
+     * 
+     * @param speed desired speed
+     */
     public void setSpeed(double speed) {
         periodicIO.desiredSpeed = Math.abs(speed);
     }
 
+    /**
+     * Sets the deploy state of the EZClimb
+     * 
+     * @param state deploy state
+     */
     public void setState(EZClimbState state) {
         switch(state) {
             case UP:

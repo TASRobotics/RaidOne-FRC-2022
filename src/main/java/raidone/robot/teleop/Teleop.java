@@ -24,6 +24,7 @@ public class Teleop {
     }
 
     private XboxController master = new XboxController(0);
+    private XboxController partner = new XboxController(1);
 
     private static Chassis chassis = Chassis.getInstance();
     private static Intake intake = Intake.getInstance();
@@ -57,7 +58,7 @@ public class Teleop {
             chassis.changeShifterState(GearShift.HIGH_TORQUE);
         }
         prevShiftState = shiftState;
-        SmartDashboard.putBoolean("Shift state", shift);
+        SmartDashboard.putString("Shift state", shift ? "low torque" : "high torque");
 
         // driveState = master.getAButton();
         // if(driveState && !prevDriveState) {

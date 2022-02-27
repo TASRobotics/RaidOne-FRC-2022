@@ -49,6 +49,21 @@ public final class Constants {
             new DifferentialDriveKinematics(TRACK_WIDTH);
         
         /** base constants */
+        /** TODO List
+         * 
+         * - Fix the weird turning issue
+         * - Test out the slew for teleop
+         * - Characterize the chassis with Sysid (try to set max output to 1, 
+         *   if that is impossible, remember to either set voltage to everything, 
+         *   or divide everything by 12)
+         * - Use the characterized values to test pathing, if it is somewhat 
+         *   accurate, add ramsete to see if it works better
+         */
+        public static final double kS = 0.0;
+        public static final double kV = 0.0;
+        public static final double kA = 0.0;
+        public static final double kP = 0.0;
+
         public static final int kEncoderCPR = 8129;
         public static final double kWheelDiameterMeters = 0.1524;
         public static final double kEncoderDistancePerPulse =

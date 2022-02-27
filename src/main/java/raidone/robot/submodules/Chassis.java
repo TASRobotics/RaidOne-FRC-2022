@@ -10,6 +10,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
@@ -44,21 +45,15 @@ public class Chassis extends Submodule {
         public double y = 0;
         public Rotation2d rotation = new Rotation2d(0);
 
-        // public double left_kV = 0.0;
-        // public double left_kA = 0.0;
-        // public double left_kP = 0.0;
-
-        // public double right_kV = 0.0;
-        // public double right_kA = 0.0;
-        // public double right_kP = 0.0;
-
-
         // Outputs
         public double leftPercent = 0.0;
         public double rightPercent = 0.0;
 
         public double desiredLeftVelocity = 0.0;
         public double desiredRightVelocity = 0.0;
+
+        public double desiredLeftVoltage = 0.0;
+        public double desiredRightVoltage = 0.0;
 
         public double leftFF = 0.0;
         public double rightFF = 0.0;
@@ -88,11 +83,12 @@ public class Chassis extends Submodule {
     private final WPI_Pigeon2 mImu= new WPI_Pigeon2(ChassisConstants.IMU_ID);
 
     /** Controllers */
-    // private final SlewRateLimiter slew = new SlewRateLimiter(ChassisConstants.SLEW_RATE_LIMIT);
+    private final SlewRateLimiter slew = new SlewRateLimiter(ChassisConstants.SLEW_RATE_LIMIT);
     // private boolean slewMode = false;
     private DifferentialDriveOdometry mOdometry;
     private TrajectoryFollower trajectoryFollower;
-    private VelocityController leftVelController, rightVelController;
+    // private VelocityController leftVelController, rightVelController;
+    private VelocityController velocityController;
     private double leftPrevVel, rightPrevVel;
 
     private ControlState controlState = ControlState.OPEN_LOOP;
@@ -173,8 +169,9 @@ public class Chassis extends Submodule {
 
         /** Config after imu init */
         trajectoryFollower = new TrajectoryFollower(ChassisConstants.DRIVE_KINEMATICS);
-        leftVelController = new VelocityController(ChassisConstants.LEFT_kV, ChassisConstants.LEFT_kA, ChassisConstants.LEFT_kP);
-        rightVelController = new VelocityController(ChassisConstants.RIGHT_kV, ChassisConstants.RIGHT_kA, ChassisConstants.RIGHT_kP);
+        // leftVelController = new VelocityController(ChassisConstants.LEFT_kV, ChassisConstants.LEFT_kA, ChassisConstants.LEFT_kP);
+        // rightVelController = new VelocityController(ChassisConstants.RIGHT_kV, ChassisConstants.RIGHT_kA, ChassisConstants.RIGHT_kP);
+        velocityController = new VelocityController(ChassisConstants.kS, ChassisConstants.kV, ChassisConstants.kA, ChassisConstants.kP);
         leftPrevVel = 0.0;
         rightPrevVel = 0.0;
 
@@ -218,11 +215,18 @@ public class Chassis extends Submodule {
                 // }
                 mLeftLeader.set(ControlMode.PercentOutput, periodicIO.leftPercent);
                 mRightLeader.set(ControlMode.PercentOutput, periodicIO.rightPercent);
+
+                // mLeftLeader.set(ControlMode.PercentOutput, slew.calculate(periodicIO.leftPercent));
+                // mRightLeader.set(ControlMode.PercentOutput, slew.calculate(periodicIO.rightPercent));
                 break;
 
             case PATH_FOLLOWING:
                 mLeftLeader.set(ControlMode.Velocity, periodicIO.desiredLeftVelocity, DemandType.ArbitraryFeedForward, periodicIO.leftFF);
                 mRightLeader.set(ControlMode.Velocity, periodicIO.desiredRightVelocity, DemandType.ArbitraryFeedForward, periodicIO.rightFF);
+
+                /** TODO - uncomment if voltage control is used */
+                mLeftLeader.setVoltage(periodicIO.desiredLeftVoltage + periodicIO.leftFF);
+                mRightLeader.setVoltage(periodicIO.desiredRightVoltage + periodicIO.rightFF);
         }
     }
 
@@ -260,46 +264,16 @@ public class Chassis extends Submodule {
             SmartDashboard.putNumber("desired left vel", leftVel);
             SmartDashboard.putNumber("desired right vel", rightVel);
 
-            periodicIO.leftFF = leftVelController.updateFF(leftVel, leftAccel);
-            periodicIO.rightFF = rightVelController.updateFF(rightVel, rightAccel);
+            // periodicIO.leftFF = leftVelController.updateFF(leftVel, leftAccel);
+            // periodicIO.rightFF = rightVelController.updateFF(rightVel, rightAccel);
+            periodicIO.leftFF = velocityController.updateFF(leftVel, leftAccel);
+            periodicIO.rightFF = velocityController.updateFF(rightVel, rightAccel);
 
             setVelocity(leftVel, rightVel);
-            // setPercentSpeed(
-            //     leftVelController.update(leftVel, leftAccel, periodicIO.actualLeftVelocity), 
-            //       rightVelController.update(rightVel, rightAccel, periodicIO.actualRightVelocity));
+            /** TODO - uncomment if voltage control is used */
+            // setVoltage(leftVel, rightVel);
         }
-        // Logger.updateEntries();
     }
-
-    // @Config
-    // public void setLeft_kV(double kV) {
-    //     periodicIO.left_kV = kV;
-    // }
-
-    // @Config
-    // public void setLeft_kA(double kA) {
-    //     periodicIO.left_kA = kA;
-    // }
-
-    // @Config
-    // public void setLeft_kP(double kP) {
-    //     periodicIO.left_kP = kP;
-    // }
-
-    // @Config
-    // public void setRight_kV(double kV) {
-    //     periodicIO.right_kV = kV;
-    // }
-
-    // @Config
-    // public void setRight_kA(double kA) {
-    //     periodicIO.right_kA = kA;
-    // }
-
-    // @Config
-    // public void setRight_kP(double kP) {
-    //     periodicIO.right_kP = kP;
-    // }
 
     /** Stops the compressor and all chassis motors */
     @Override
@@ -333,9 +307,19 @@ public class Chassis extends Submodule {
      * @param right right speed
      */
     public void setVelocity(double left, double right) {
-        
         periodicIO.desiredLeftVelocity = left;
         periodicIO.desiredRightVelocity = right;
+    }
+
+    /**
+     * Sets voltage [~-12, ~12]
+     * 
+     * @param left left voltage
+     * @param right right voltage
+     */
+    public void setVoltage(double left, double right) {
+        periodicIO.desiredLeftVoltage = left;
+        periodicIO.desiredRightVoltage = right;
     }
 
     /**

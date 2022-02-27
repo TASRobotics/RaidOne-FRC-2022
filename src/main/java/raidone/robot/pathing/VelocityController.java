@@ -2,11 +2,11 @@ package raidone.robot.pathing;
 
 
 public class VelocityController {
-    private double kP, kV, kA, feedForward, feedBack;
+    private double kP, kV, kA, kS, feedForward, feedBack;
 
     /** Default constructor - sets all gains to 0 */
     public VelocityController() {
-        this(0.0, 0.0, 0.0);
+        this(0.0, 0.0, 0.0, 0.0);
     }
 
     /**
@@ -16,7 +16,8 @@ public class VelocityController {
      * @param kV velocity feedforward gain
      * @param kA acceleration feedforward gain
      */
-    public VelocityController(double kV, double kA, double kP) {
+    public VelocityController(double kS, double kV, double kA, double kP) {
+        this.kS = kS;
         this.kP = kP;
         this.kV = kV;
         this.kA = kA;
@@ -29,7 +30,8 @@ public class VelocityController {
      * @param kV velocity feedforward gain
      * @param kA acceleration feedforward gain
      */
-    public void setGain(double kP, double kV, double kA) {
+    public void setGain(double kS, double kP, double kV, double kA) {
+        this.kS = kS;
         this.kP = kP;
         this.kV = kV;
         this.kA = kA;
@@ -43,7 +45,7 @@ public class VelocityController {
      * @return updated velocity
      */
     public double update(double velMPS, double accelMPS, double measuredVel) {
-        feedForward = kV * velMPS + kA * accelMPS;
+        feedForward = Math.signum(velMPS) * kS + kV * velMPS + kA * accelMPS;
         feedBack = kP * (velMPS - measuredVel);
         return feedForward + feedBack;
     }
@@ -56,7 +58,7 @@ public class VelocityController {
      * @return updated velocity
      */
     public double updateFF(double velMPS, double accelMPS) {
-        feedForward = kV * velMPS + kA * accelMPS;
+        feedForward = Math.signum(velMPS) * kS + kV * velMPS + kA * accelMPS;
         return feedForward;
     }
 }

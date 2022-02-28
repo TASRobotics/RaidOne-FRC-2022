@@ -6,7 +6,6 @@ import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
 
@@ -28,6 +27,7 @@ import raidone.robot.Constants;
 
 import raidone.robot.wrappers.InactiveCompressor;
 import raidone.robot.wrappers.InactiveDoubleSolenoid;
+import raidone.robot.wrappers.LogicalTalonSRX;
 
 public class Chassis extends Submodule {
     public static class PeriodicIO {
@@ -52,9 +52,6 @@ public class Chassis extends Submodule {
         public double desiredLeftVelocity = 0.0;
         public double desiredRightVelocity = 0.0;
 
-        public double desiredLeftVoltage = 0.0;
-        public double desiredRightVoltage = 0.0;
-
         public double leftFF = 0.0;
         public double rightFF = 0.0;
     }
@@ -70,20 +67,21 @@ public class Chassis extends Submodule {
     }
 
     /** Motors */
-    private final WPI_TalonSRX mLeftLeader = new WPI_TalonSRX(ChassisConstants.LEFT_LEADER_ID);
+    private final LogicalTalonSRX mLeftLeader = new LogicalTalonSRX(ChassisConstants.LEFT_LEADER_ID);
     private final WPI_VictorSPX mLeftFollowerA = new WPI_VictorSPX(ChassisConstants.LEFT_FOLLOWER_A_ID);
     private final WPI_VictorSPX mLeftFollowerB = new WPI_VictorSPX(ChassisConstants.LEFT_FOLLOWER_B_ID);
 
-    private final WPI_TalonSRX mRightLeader = new WPI_TalonSRX(ChassisConstants.RIGHT_LEADER_ID);
+    private final LogicalTalonSRX mRightLeader = new LogicalTalonSRX(ChassisConstants.RIGHT_LEADER_ID);
     private final WPI_VictorSPX mRightFollowerA = new WPI_VictorSPX(ChassisConstants.RIGHT_FOLLOWER_A_ID);
     private final WPI_VictorSPX mRightFollowerB = new WPI_VictorSPX(ChassisConstants.RIGHT_FOLLOWER_B_ID);
 
 
     /** Sensors */
-    private final WPI_Pigeon2 mImu= new WPI_Pigeon2(ChassisConstants.IMU_ID);
+    private final WPI_Pigeon2 mImu = new WPI_Pigeon2(ChassisConstants.IMU_ID);
 
     /** Controllers */
-    private final SlewRateLimiter slew = new SlewRateLimiter(ChassisConstants.SLEW_RATE_LIMIT);
+    private final SlewRateLimiter leftSlew = new SlewRateLimiter(ChassisConstants.SLEW_RATE_LIMIT);
+    private final SlewRateLimiter rightSlew = new SlewRateLimiter(ChassisConstants.SLEW_RATE_LIMIT);
     // private boolean slewMode = false;
     private DifferentialDriveOdometry mOdometry;
     private TrajectoryFollower trajectoryFollower;
@@ -138,8 +136,8 @@ public class Chassis extends Submodule {
         mRightFollowerB.setInverted(InvertType.FollowMaster);
 
         /** Inverts encoder */
-        mRightLeader.setSensorPhase(true);
-        mLeftLeader.setSensorPhase(true);
+        mRightLeader.setSensorPhase(false);
+        mLeftLeader.setSensorPhase(false);
 
         /** Sets feedback sensor */
         mLeftLeader.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 
@@ -159,12 +157,25 @@ public class Chassis extends Submodule {
         mRightLeader.configPeakOutputForward(1, Constants.TIMEOUT_MS);
         mRightLeader.configPeakOutputReverse(-1, Constants.TIMEOUT_MS);
 
+        /** Config voltage compensation */
+        mLeftLeader.configVoltageCompSaturation(12, Constants.TIMEOUT_MS);
+        mLeftLeader.enableVoltageCompensation(true);
+        mRightLeader.configVoltageCompSaturation(12, Constants.TIMEOUT_MS);
+        mRightLeader.enableVoltageCompensation(true);
+
         /** Config Talon PID */
+        // ! change !
+        // mLeftLeader.config_kP(ChassisConstants.PID_LOOP_IDX, 
+        //                       ChassisConstants.LEFT_kP, 
+        //                       Constants.TIMEOUT_MS);
+        // mRightLeader.config_kP(ChassisConstants.PID_LOOP_IDX, 
+        //                        ChassisConstants.RIGHT_kP, 
+        //                        Constants.TIMEOUT_MS);
         mLeftLeader.config_kP(ChassisConstants.PID_LOOP_IDX, 
-                              ChassisConstants.LEFT_kP, 
+                              ChassisConstants.kP, 
                               Constants.TIMEOUT_MS);
         mRightLeader.config_kP(ChassisConstants.PID_LOOP_IDX, 
-                               ChassisConstants.RIGHT_kP, 
+                               ChassisConstants.kP, 
                                Constants.TIMEOUT_MS);
 
         /** Config after imu init */
@@ -204,29 +215,22 @@ public class Chassis extends Submodule {
 
     @Override
     public void run() {
-        mLeftLeader.set(ControlMode.PercentOutput, periodicIO.leftPercent);
-        mRightLeader.set(ControlMode.PercentOutput, periodicIO.rightPercent);
-
         switch(controlState) {
             case OPEN_LOOP:
                 // if(slewMode) {
                 //     mLeftLeader.set(ControlMode.PercentOutput, periodicIO.leftPercent);
                 //     mRightLeader.set(ControlMode.PercentOutput, periodicIO.rightPercent);
                 // }
-                mLeftLeader.set(ControlMode.PercentOutput, periodicIO.leftPercent);
-                mRightLeader.set(ControlMode.PercentOutput, periodicIO.rightPercent);
+                // mLeftLeader.set(ControlMode.PercentOutput, periodicIO.leftPercent);
+                // mRightLeader.set(ControlMode.PercentOutput, periodicIO.rightPercent);
 
-                // mLeftLeader.set(ControlMode.PercentOutput, slew.calculate(periodicIO.leftPercent));
-                // mRightLeader.set(ControlMode.PercentOutput, slew.calculate(periodicIO.rightPercent));
+                mLeftLeader.set(ControlMode.PercentOutput, leftSlew.calculate(periodicIO.leftPercent));
+                mRightLeader.set(ControlMode.PercentOutput, rightSlew.calculate(periodicIO.rightPercent));
                 break;
 
             case PATH_FOLLOWING:
                 mLeftLeader.set(ControlMode.Velocity, periodicIO.desiredLeftVelocity, DemandType.ArbitraryFeedForward, periodicIO.leftFF);
                 mRightLeader.set(ControlMode.Velocity, periodicIO.desiredRightVelocity, DemandType.ArbitraryFeedForward, periodicIO.rightFF);
-
-                /** TODO - uncomment if voltage control is used */
-                mLeftLeader.setVoltage(periodicIO.desiredLeftVoltage + periodicIO.leftFF);
-                mRightLeader.setVoltage(periodicIO.desiredRightVoltage + periodicIO.rightFF);
         }
     }
 
@@ -235,8 +239,11 @@ public class Chassis extends Submodule {
         periodicIO.leftPosition = mLeftLeader.getSelectedSensorPosition() * ChassisConstants.kEncoderDistancePerPulse;
         periodicIO.rightPosition = mRightLeader.getSelectedSensorPosition() * ChassisConstants.kEncoderDistancePerPulse;
 
-        periodicIO.actualLeftVelocity = mLeftLeader.getSelectedSensorVelocity() * ChassisConstants.kEncoderDistancePerPulse * 10;
-        periodicIO.actualRightVelocity = mRightLeader.getSelectedSensorVelocity() * ChassisConstants.kEncoderDistancePerPulse * 10;
+        // ! change
+        // periodicIO.actualLeftVelocity = mLeftLeader.getSelectedSensorVelocity() * ChassisConstants.kEncoderDistancePerPulse * 10;
+        // periodicIO.actualRightVelocity = mRightLeader.getSelectedSensorVelocity() * ChassisConstants.kEncoderDistancePerPulse * 10;
+        periodicIO.actualLeftVelocity = mLeftLeader.getSelectedSensorVelocity() * ChassisConstants.kEncoderDistancePerPulse;
+        periodicIO.actualRightVelocity = mRightLeader.getSelectedSensorVelocity() * ChassisConstants.kEncoderDistancePerPulse;
 
         periodicIO.heading = Rotation2d.fromDegrees(rescale180(mImu.getRotation2d().getDegrees()));
 
@@ -270,8 +277,6 @@ public class Chassis extends Submodule {
             periodicIO.rightFF = velocityController.updateFF(rightVel, rightAccel);
 
             setVelocity(leftVel, rightVel);
-            /** TODO - uncomment if voltage control is used */
-            // setVoltage(leftVel, rightVel);
         }
     }
 
@@ -309,17 +314,6 @@ public class Chassis extends Submodule {
     public void setVelocity(double left, double right) {
         periodicIO.desiredLeftVelocity = left;
         periodicIO.desiredRightVelocity = right;
-    }
-
-    /**
-     * Sets voltage [~-12, ~12]
-     * 
-     * @param left left voltage
-     * @param right right voltage
-     */
-    public void setVoltage(double left, double right) {
-        periodicIO.desiredLeftVoltage = left;
-        periodicIO.desiredRightVoltage = right;
     }
 
     /**
@@ -386,8 +380,10 @@ public class Chassis extends Submodule {
      * @param right percent speed
      */
     public void tankDrive(double left, double right) {
-        left = JoystickUtils.deadband(JoystickUtils.monomialScale(left, ChassisConstants.MONOMIAL_SCALE, 1));
-        right = JoystickUtils.deadband(JoystickUtils.monomialScale(right, ChassisConstants.MONOMIAL_SCALE, 1));
+        // left = JoystickUtils.deadband(JoystickUtils.monomialScale(left, ChassisConstants.MONOMIAL_SCALE, 1));
+        // right = JoystickUtils.deadband(JoystickUtils.monomialScale(right, ChassisConstants.MONOMIAL_SCALE, 1));
+        left = JoystickUtils.deadband(left);
+        right = JoystickUtils.deadband(right);
         periodicIO.leftPercent = left;
         periodicIO.rightPercent = right;
     }

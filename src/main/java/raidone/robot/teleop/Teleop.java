@@ -47,7 +47,8 @@ public class Teleop {
     boolean shift = false;
     // String message = "";
     public void onLoop() {
-        chassis.curvatureDrive(-master.getLeftY(), -master.getRightX(), Math.abs(master.getLeftY()) < Constants.DEADBAND);
+        chassis.curvatureDrive(master.getLeftY(), master.getRightX(), Math.abs(master.getLeftY()) < Constants.DEADBAND);
+        // chassis.tankDrive(master.getLeftY(), master.getRightY());
         shiftState = master.getLeftBumper();
         if(shiftState && !prevShiftState) {
             shift = !shift;

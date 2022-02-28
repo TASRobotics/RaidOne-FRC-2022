@@ -1,6 +1,7 @@
 package raidone.robot.submodules;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import raidone.robot.Constants.EZClimbConstants;
 import raidone.robot.wrappers.InactiveDoubleSolenoid;
@@ -43,6 +44,9 @@ public class EZClimb extends Submodule {
 
         mLeft.setInverted(false);
         mRight.setInverted(true);
+
+        mLeft.setNeutralMode(NeutralMode.Coast);
+        mRight.setNeutralMode(NeutralMode.Coast);
         // mRightFollower.setInverted(InvertType.OpposeMaster);
     }
 
@@ -55,7 +59,7 @@ public class EZClimb extends Submodule {
 
     @Override
     public void run() {
-        // mLeft.set(ControlMode.PercentOutput, periodicIO.desiredSpeed);
+        mLeft.set(ControlMode.PercentOutput, periodicIO.desiredSpeed);
         mRight.set(ControlMode.PercentOutput, periodicIO.desiredSpeed);
         // mRightFollower.set(ControlMode.PercentOutput, periodicIO.desiredSpeed);
     }
@@ -74,7 +78,7 @@ public class EZClimb extends Submodule {
      * @param speed desired speed
      */
     public void setSpeed(double speed) {
-        periodicIO.desiredSpeed = Math.abs(speed);
+        periodicIO.desiredSpeed = -Math.abs(speed);
     }
 
     /**

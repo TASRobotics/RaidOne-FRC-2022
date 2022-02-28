@@ -53,7 +53,7 @@ public final class Constants {
         /** // TODO 
          * 
          * - Fix the weird turning issue
-         * - Add leader/follower shenanigans for climb 
+         * - Add leader/follower shenanigans for intake & climb 
          * - Characterize the chassis with Sysid (try to set max output to 1, 
          *   if that is impossible, remember to either set voltage to everything, 
          *   or divide everything by 12)
@@ -73,7 +73,7 @@ public final class Constants {
 
         /** Teleop Constants */
         public static final double MONOMIAL_SCALE = 0.0;
-        public static final double SLEW_RATE_LIMIT = 1.75;
+        public static final double RAMP_RATE = 0.33;
     }
 
     public static final class IntakeConstants {
@@ -112,4 +112,5 @@ public final class Constants {
     /** Universal constants */
     public static final double DEADBAND = 0.06;
     public static final int TIMEOUT_MS = 10;
+    public static final double VOLTAGE_COMPENSATION = 12.0;
 }

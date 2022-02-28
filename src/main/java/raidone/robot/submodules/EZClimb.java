@@ -1,8 +1,10 @@
 package raidone.robot.submodules;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
+import raidone.robot.Constants;
 import raidone.robot.Constants.EZClimbConstants;
 import raidone.robot.wrappers.InactiveDoubleSolenoid;
 import raidone.robot.wrappers.LazyTalonFX;
@@ -17,8 +19,8 @@ public class EZClimb extends Submodule {
     }
 
     /** Motors */
-    private static final LazyTalonFX mLeft = new LazyTalonFX(EZClimbConstants.LEFT_ID);
-    private static final LazyTalonFX mRight = new LazyTalonFX(EZClimbConstants.RIGHT_ID);
+    private static final LazyTalonFX mLeftLeader = new LazyTalonFX(EZClimbConstants.LEFT_ID);
+    private static final LazyTalonFX mRightFollower = new LazyTalonFX(EZClimbConstants.RIGHT_ID);
 
     /** Pneumatics */
     private static final InactiveDoubleSolenoid solenoid = new InactiveDoubleSolenoid(
@@ -37,16 +39,19 @@ public class EZClimb extends Submodule {
 
     @Override
     public void onInit() {
-        mLeft.configFactoryDefault();
-        mRight.configFactoryDefault();
+        mLeftLeader.configFactoryDefault();
+        mRightFollower.configFactoryDefault();
 
-        // mRightFollower.follow(mLeftLeader);
+        mRightFollower.follow(mLeftLeader);
 
-        mLeft.setInverted(false);
-        mRight.setInverted(true);
+        mLeftLeader.setInverted(false);
+        mRightFollower.setInverted(InvertType.OpposeMaster);
 
-        mLeft.setNeutralMode(NeutralMode.Coast);
-        mRight.setNeutralMode(NeutralMode.Coast);
+        mLeftLeader.setNeutralMode(NeutralMode.Coast);
+
+        mLeftLeader.configVoltageCompSaturation(Constants.VOLTAGE_COMPENSATION, Constants.TIMEOUT_MS);
+        mLeftLeader.enableVoltageCompensation(true);
+        // mRightFollower.setNeutralMode(NeutralMode.Coast);
         // mRightFollower.setInverted(InvertType.OpposeMaster);
     }
 
@@ -59,16 +64,16 @@ public class EZClimb extends Submodule {
 
     @Override
     public void run() {
-        mLeft.set(ControlMode.PercentOutput, periodicIO.desiredSpeed);
-        mRight.set(ControlMode.PercentOutput, periodicIO.desiredSpeed);
+        mLeftLeader.set(ControlMode.PercentOutput, periodicIO.desiredSpeed);
+        // mRightFollower.set(ControlMode.PercentOutput, periodicIO.desiredSpeed);
         // mRightFollower.set(ControlMode.PercentOutput, periodicIO.desiredSpeed);
     }
 
     @Override
     public void stop() {
         periodicIO.desiredSpeed = 0.0;
-        mLeft.set(ControlMode.Disabled, 0.0);
-        mRight.set(ControlMode.Disabled, 0.0);
+        mLeftLeader.set(ControlMode.Disabled, 0.0);
+        mRightFollower.set(ControlMode.Disabled, 0.0);
     }
 
     /**

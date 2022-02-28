@@ -9,7 +9,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
 
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
@@ -80,9 +79,6 @@ public class Chassis extends Submodule {
     private final WPI_Pigeon2 mImu = new WPI_Pigeon2(ChassisConstants.IMU_ID);
 
     /** Controllers */
-    private final SlewRateLimiter leftSlew = new SlewRateLimiter(ChassisConstants.SLEW_RATE_LIMIT);
-    private final SlewRateLimiter rightSlew = new SlewRateLimiter(ChassisConstants.SLEW_RATE_LIMIT);
-    // private boolean slewMode = false;
     private DifferentialDriveOdometry mOdometry;
     private TrajectoryFollower trajectoryFollower;
     // private VelocityController leftVelController, rightVelController;
@@ -158,19 +154,19 @@ public class Chassis extends Submodule {
         mRightLeader.configPeakOutputReverse(-1, Constants.TIMEOUT_MS);
 
         /** Config voltage compensation */
-        mLeftLeader.configVoltageCompSaturation(12, Constants.TIMEOUT_MS);
+        mLeftLeader.configVoltageCompSaturation(Constants.VOLTAGE_COMPENSATION, Constants.TIMEOUT_MS);
         mLeftLeader.enableVoltageCompensation(true);
-        mRightLeader.configVoltageCompSaturation(12, Constants.TIMEOUT_MS);
+        mRightLeader.configVoltageCompSaturation(Constants.VOLTAGE_COMPENSATION, Constants.TIMEOUT_MS);
         mRightLeader.enableVoltageCompensation(true);
+
+        /** Config ramp rate */
+        mLeftLeader.configOpenloopRamp(ChassisConstants.RAMP_RATE, Constants.TIMEOUT_MS);
+        mLeftLeader.configClosedloopRamp(0);
+        mRightLeader.configOpenloopRamp(ChassisConstants.RAMP_RATE, Constants.TIMEOUT_MS);
+        mRightLeader.configClosedloopRamp(0);
 
         /** Config Talon PID */
         // ! change !
-        // mLeftLeader.config_kP(ChassisConstants.PID_LOOP_IDX, 
-        //                       ChassisConstants.LEFT_kP, 
-        //                       Constants.TIMEOUT_MS);
-        // mRightLeader.config_kP(ChassisConstants.PID_LOOP_IDX, 
-        //                        ChassisConstants.RIGHT_kP, 
-        //                        Constants.TIMEOUT_MS);
         mLeftLeader.config_kP(ChassisConstants.PID_LOOP_IDX, 
                               ChassisConstants.kP, 
                               Constants.TIMEOUT_MS);
@@ -208,24 +204,14 @@ public class Chassis extends Submodule {
         resetOdometry(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0.0)));
 
         changeShifterState(GearShift.LOW_TORQUE);
-
-        // leftVelController.setGain(periodicIO.left_kP, periodicIO.left_kV, periodicIO.left_kA);
-        // rightVelController.setGain(periodicIO.right_kP, periodicIO.right_kV, periodicIO.right_kA);
     }
 
     @Override
     public void run() {
         switch(controlState) {
             case OPEN_LOOP:
-                // if(slewMode) {
-                //     mLeftLeader.set(ControlMode.PercentOutput, periodicIO.leftPercent);
-                //     mRightLeader.set(ControlMode.PercentOutput, periodicIO.rightPercent);
-                // }
-                // mLeftLeader.set(ControlMode.PercentOutput, periodicIO.leftPercent);
-                // mRightLeader.set(ControlMode.PercentOutput, periodicIO.rightPercent);
-
-                mLeftLeader.set(ControlMode.PercentOutput, leftSlew.calculate(periodicIO.leftPercent));
-                mRightLeader.set(ControlMode.PercentOutput, rightSlew.calculate(periodicIO.rightPercent));
+                mLeftLeader.set(ControlMode.PercentOutput, periodicIO.leftPercent);
+                mRightLeader.set(ControlMode.PercentOutput, periodicIO.rightPercent);
                 break;
 
             case PATH_FOLLOWING:
@@ -485,8 +471,4 @@ public class Chassis extends Submodule {
         }
         return trajectoryFollower.isFinished();
     }
-
-    // public void setSlew(boolean mode) {
-    //     slewMode = mode;
-    // }
 }

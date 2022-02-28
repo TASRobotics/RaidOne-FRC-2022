@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import raidone.robot.Constants;
 import raidone.robot.Constants.IntakeConstants;
 import raidone.robot.utils.JoystickUtils;
 import raidone.robot.wrappers.InactiveDoubleSolenoid;
@@ -43,9 +44,12 @@ public class Intake extends Submodule {
         mRightFollower.restoreFactoryDefaults();
 
         mLeftLeader.setInverted(false);
-        mRightFollower.setInverted(true);
+        // mRightFollower.setInverted(true);
+        mRightFollower.follow(mLeftLeader, true);
 
         setBrakeMode(IdleMode.kBrake);
+
+        mLeftLeader.enableVoltageCompensation(Constants.VOLTAGE_COMPENSATION);
     }
 
     @Override
@@ -58,7 +62,7 @@ public class Intake extends Submodule {
     @Override
     public void run() {
         mLeftLeader.set(periodicIO.desiredIntakeSpeed);
-        mRightFollower.set(periodicIO.desiredIntakeSpeed);
+        // mRightFollower.set(periodicIO.desiredIntakeSpeed);
     }
 
     @Override
@@ -120,6 +124,5 @@ public class Intake extends Submodule {
      */
     public void setBrakeMode(IdleMode brake) {
         mLeftLeader.setIdleMode(brake);
-        mRightFollower.setIdleMode(brake);
     }
 }

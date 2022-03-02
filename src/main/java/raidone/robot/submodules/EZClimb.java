@@ -44,13 +44,18 @@ public class EZClimb extends Submodule {
 
         mRightFollower.follow(mLeftLeader);
 
-        mLeftLeader.setInverted(false);
+        mLeftLeader.setInverted(true);
         mRightFollower.setInverted(InvertType.OpposeMaster);
 
+        // mRightFollower.setInverted(false);
+
         mLeftLeader.setNeutralMode(NeutralMode.Coast);
+        // mRightFollower.setNeutralMode(NeutralMode.Coast);
 
         mLeftLeader.configVoltageCompSaturation(Constants.VOLTAGE_COMPENSATION, Constants.TIMEOUT_MS);
         mLeftLeader.enableVoltageCompensation(true);
+        // mRightFollower.configVoltageCompSaturation(Constants.VOLTAGE_COMPENSATION, Constants.TIMEOUT_MS);
+        // mRightFollower.enableVoltageCompensation(true);
         // mRightFollower.setNeutralMode(NeutralMode.Coast);
         // mRightFollower.setInverted(InvertType.OpposeMaster);
     }
@@ -73,7 +78,7 @@ public class EZClimb extends Submodule {
     public void stop() {
         periodicIO.desiredSpeed = 0.0;
         mLeftLeader.set(ControlMode.Disabled, 0.0);
-        mRightFollower.set(ControlMode.Disabled, 0.0);
+        // mRightFollower.set(ControlMode.Disabled, 0.0);
     }
 
     /**
@@ -83,7 +88,7 @@ public class EZClimb extends Submodule {
      * @param speed desired speed
      */
     public void setSpeed(double speed) {
-        periodicIO.desiredSpeed = -Math.abs(speed);
+        periodicIO.desiredSpeed = Math.abs(speed);
     }
 
     /**

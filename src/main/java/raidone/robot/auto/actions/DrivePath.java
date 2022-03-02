@@ -2,6 +2,7 @@ package raidone.robot.auto.actions;
 
 import edu.wpi.first.math.trajectory.Trajectory;
 import raidone.robot.submodules.Chassis;
+import raidone.robot.submodules.Chassis.GearShift;
 import raidone.robot.utils.FinishConditionInterface;
 
 /** Action for following a path. */
@@ -63,6 +64,7 @@ public class DrivePath implements Action {
 
     @Override
     public void start() {
+        chassis.changeShifterState(GearShift.HIGH_TORQUE);
         System.out.println("[Auto] Action '" + getClass().getSimpleName() + "' started!");
         if (isFirstPath) {
             chassis.zero();
@@ -84,6 +86,6 @@ public class DrivePath implements Action {
     public void done() {
         System.out.println("[Auto] Action '" + getClass().getSimpleName() + "' finished!");
         chassis.stop();
-        chassis.setBrakeMode(false);
+        // chassis.setBrakeMode(false);
     }
 }

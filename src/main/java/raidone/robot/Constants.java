@@ -52,18 +52,21 @@ public final class Constants {
 
         /** // TODO 
          * 
-         * - Fix the weird turning issue
-         * - Add leader/follower shenanigans for intake & climb 
-         * - Characterize the chassis with Sysid (try to set max output to 1, 
-         *   if that is impossible, remember to either set voltage to everything, 
-         *   or divide everything by 12)
+         * - check lift for proper follower/leader shenanigans 
+         * - add camera
+         * - find actual max velocity to get actual constants
          * - Use the characterized values to test pathing, if it is somewhat 
          *   accurate, add ramsete to see if it works better
+         * - leader/follower for climb???
          */
-        public static final double kS = 0.0;
-        public static final double kV = 0.0;
-        public static final double kA = 0.0;
-        public static final double kP = 0.0;
+        public static final double kS = 0.9586 * (4.1 / 12);
+        public static final double kV = 2.7954 * (4.1 / 12);
+        public static final double kA = 0.93738 * (4.1 / 12);
+        public static final double kP = 4.443 * (4.1 / 12);
+        // public static final double kS = 0.9586;
+        // public static final double kV = 2.7954;
+        // public static final double kA = 0.93738;
+        // public static final double kP = 4.443;
 
         public static final int kEncoderCPR = 8129;
         public static final double kWheelDiameterMeters = 0.1524;
@@ -73,7 +76,7 @@ public final class Constants {
 
         /** Teleop Constants */
         public static final double MONOMIAL_SCALE = 0.0;
-        public static final double RAMP_RATE = 0.33;
+        public static final double RAMP_RATE = 0.3; // 0.33
     }
 
     public static final class IntakeConstants {
@@ -99,8 +102,8 @@ public final class Constants {
 
     public static final class AutoConstants {
         /** Motion profile constants */
-        public static final double kMaxSpeedMetersPerSecond = 4;
-        public static final double kMaxAccelerationMetersPerSecondSquared = 2.5;
+        public static final double kMaxSpeedMetersPerSecond = 2;
+        public static final double kMaxAccelerationMetersPerSecondSquared = 2;
         
         /** Ramsete constants */
         public static final double kRamseteB = 2;

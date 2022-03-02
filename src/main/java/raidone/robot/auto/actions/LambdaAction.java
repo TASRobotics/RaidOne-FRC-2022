@@ -3,13 +3,13 @@ package raidone.robot.auto.actions;
 /** Shamelessly stolen from Raid Zero 2020 code */
 public class LambdaAction implements Action {
 
-    public interface VoidInterace {
+    public interface VoidInterface {
         void f();
     }
 
-    VoidInterace mF;
+    VoidInterface mF;
 
-    public LambdaAction(VoidInterace f) {
+    public LambdaAction(VoidInterface f) {
         this.mF = f;
     }
 

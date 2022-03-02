@@ -9,11 +9,15 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
 
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 // import io.github.oblarg.oblog.Logger;
@@ -190,6 +194,13 @@ public class Chassis extends Submodule {
         setBrakeMode(true);
         changeShifterState(GearShift.LOW_TORQUE);
 
+        /** Camera */
+        UsbCamera cam1 =  CameraServer.startAutomaticCapture(0);
+        UsbCamera cam2 = CameraServer.startAutomaticCapture(1);
+        cam1.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
+        cam2.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
+
+
         // Logger.configureLoggingAndConfig(this, false);
     }
 
@@ -204,6 +215,7 @@ public class Chassis extends Submodule {
         resetOdometry(new Pose2d(0.0, 0.0, Rotation2d.fromDegrees(0.0)));
 
         changeShifterState(GearShift.LOW_TORQUE);
+        setBrakeMode(true);
     }
 
     @Override
@@ -217,6 +229,7 @@ public class Chassis extends Submodule {
             case PATH_FOLLOWING:
                 mLeftLeader.set(ControlMode.Velocity, periodicIO.desiredLeftVelocity, DemandType.ArbitraryFeedForward, periodicIO.leftFF);
                 mRightLeader.set(ControlMode.Velocity, periodicIO.desiredRightVelocity, DemandType.ArbitraryFeedForward, periodicIO.rightFF);
+                break;
         }
     }
 
@@ -243,8 +256,9 @@ public class Chassis extends Submodule {
 
 
         if(controlState == ControlState.PATH_FOLLOWING) {
-            double leftVel = trajectoryFollower.update(updatedPose).leftMetersPerSecond;
-            double rightVel = trajectoryFollower.update(updatedPose).rightMetersPerSecond;
+            /** WHY DO I NEED TO MAKE THIS NEGATIVE!?! */
+            double leftVel = -trajectoryFollower.update(updatedPose).leftMetersPerSecond;
+            double rightVel = -trajectoryFollower.update(updatedPose).rightMetersPerSecond;
             // double rightVel = trajectoryFollower.update(updatedPose).leftMetersPerSecond;
             // double leftVel = trajectoryFollower.update(updatedPose).rightMetersPerSecond;
 
@@ -254,8 +268,8 @@ public class Chassis extends Submodule {
             leftPrevVel = leftVel;
             rightPrevVel = rightVel;
 
-            SmartDashboard.putNumber("desired left vel", leftVel);
-            SmartDashboard.putNumber("desired right vel", rightVel);
+            SmartDashboard.putNumber("desired left vel", -leftVel);
+            SmartDashboard.putNumber("desired right vel", -rightVel);
 
             // periodicIO.leftFF = leftVelController.updateFF(leftVel, leftAccel);
             // periodicIO.rightFF = rightVelController.updateFF(rightVel, rightAccel);
@@ -277,7 +291,7 @@ public class Chassis extends Submodule {
         mLeftLeader.set(ControlMode.Disabled, 0.0);
         mRightLeader.set(ControlMode.Disabled, 0.0);
 
-        compressor.changeState();
+        // compressor.changeState();
     }
 
     /**
@@ -308,9 +322,9 @@ public class Chassis extends Submodule {
      * @param shift shifter setting
      */
     public void changeShifterState(GearShift shift) {
-        if(shift == GearShift.LOW_TORQUE) {
+        if(shift == GearShift.HIGH_TORQUE) {
             shifter.set(Value.kReverse);
-        } else if(shift == GearShift.HIGH_TORQUE) {
+        } else if(shift == GearShift.LOW_TORQUE) {
             shifter.set(Value.kForward);
         } else {
             shifter.set(Value.kOff);

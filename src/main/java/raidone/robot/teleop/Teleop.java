@@ -47,9 +47,9 @@ public class Teleop {
     boolean shift = false;
     // String message = "";
     public void onLoop() {
-        chassis.curvatureDrive(master.getLeftY(), master.getRightX(), Math.abs(master.getLeftY()) < Constants.DEADBAND);
+        chassis.curvatureDrive(master.getLeftY(), -master.getRightX(), Math.abs(master.getLeftY()) < Constants.DEADBAND);
         // chassis.tankDrive(master.getLeftY(), master.getRightY());
-        shiftState = master.getLeftBumper();
+        shiftState = master.getLeftBumper() || partner.getAButton();
         if(shiftState && !prevShiftState) {
             shift = !shift;
         }
@@ -86,17 +86,17 @@ public class Teleop {
         SmartDashboard.putNumber("y pose", chassis.getPeriodicIO().y);
         SmartDashboard.putNumber("rotation", chassis.getPeriodicIO().rotation.getDegrees());
 
-        if(master.getStartButton()) {
+        if(master.getStartButton() || partner.getStartButton()) {
             climb.setState(EZClimbState.UP);
         } else {
             climb.setState(EZClimbState.DOWN);
         }
 
         /** Shift */
-        if(master.getRightBumper()) {
+        if(partner.getBButton()) {
             climb.setSpeed(master.getLeftTriggerAxis());
         } else {
-            intake.autoSet(master.getRightTriggerAxis() - master.getLeftTriggerAxis());
+            intake.autoSet(partner.getRightTriggerAxis() - partner.getLeftTriggerAxis());
         }
     }
 }

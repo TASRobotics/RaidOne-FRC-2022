@@ -196,9 +196,7 @@ public class Chassis extends Submodule {
 
         /** Camera */
         UsbCamera cam1 =  CameraServer.startAutomaticCapture(0);
-        UsbCamera cam2 = CameraServer.startAutomaticCapture(1);
         cam1.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
-        cam2.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
 
 
         // Logger.configureLoggingAndConfig(this, false);
@@ -340,11 +338,11 @@ public class Chassis extends Submodule {
      */
     public void curvatureDrive(double throttle, double turn, boolean quickTurn) {
         /** Set deadband to all inputs */
-        // throttle = JoystickUtils.deadband(JoystickUtils.monomialScale(throttle, ChassisConstants.MONOMIAL_SCALE, 1));
-        // turn = JoystickUtils.deadband(JoystickUtils.monomialScale(turn, ChassisConstants.MONOMIAL_SCALE, 1));
+        throttle = JoystickUtils.deadband(JoystickUtils.monomialScale(throttle, ChassisConstants.MONOMIAL_SCALE, 1));
+        turn = JoystickUtils.deadband(JoystickUtils.monomialScale(turn, ChassisConstants.MONOMIAL_SCALE, 1));
 
-        throttle = JoystickUtils.deadband(throttle);
-        turn = JoystickUtils.deadband(turn);
+        // throttle = JoystickUtils.deadband(throttle);
+        // turn = JoystickUtils.deadband(turn);
 
         // Compute velocity, right stick = curvature if no quickturn, else power
         double leftSpeed = throttle + (quickTurn ? turn : Math.abs(throttle) * turn);

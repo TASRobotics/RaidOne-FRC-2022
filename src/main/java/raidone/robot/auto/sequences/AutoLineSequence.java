@@ -27,6 +27,6 @@ public class AutoLineSequence extends AutoSequence {
 
     @Override
     public String getName() {
-        return "Auto Line Sequence Sequence";
+        return "Auto Line Sequence";
     }
 }

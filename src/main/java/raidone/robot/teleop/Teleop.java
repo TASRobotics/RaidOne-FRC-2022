@@ -93,10 +93,11 @@ public class Teleop {
         }
 
         /** Shift */
-        if(partner.getBButton()) {
+        if(master.getRightBumper()) {
             climb.setSpeed(master.getLeftTriggerAxis());
         } else {
-            intake.autoSet(partner.getRightTriggerAxis() - partner.getLeftTriggerAxis());
+            intake.autoSet((master.getRightTriggerAxis() + partner.getRightTriggerAxis())
+                             - (master.getLeftTriggerAxis() + partner.getLeftTriggerAxis()));
         }
     }
 }

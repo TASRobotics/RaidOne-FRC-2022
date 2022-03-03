@@ -1,5 +1,7 @@
 package raidone.robot.auto.actions;
 
+import javax.net.ssl.TrustManager;
+
 import raidone.robot.submodules.Chassis;
 import raidone.robot.utils.TimerBoolean;
 
@@ -19,11 +21,12 @@ public class SimpleMove implements Action {
         chassis.stop();
         chassis.setBrakeMode(true);
         timer.reset();
+        timer.update(true);
     }
 
     @Override
     public void update() {
-        chassis.setPercentSpeed(leftPercentSpeed, rightPercentSpeed);
+        chassis.setPercentSpeed(-leftPercentSpeed, -rightPercentSpeed);
     }
 
     @Override
@@ -33,6 +36,7 @@ public class SimpleMove implements Action {
 
     @Override
     public void done() {
+        chassis.setPercentSpeed(0, 0);
         chassis.stop();
     }
 }

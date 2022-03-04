@@ -1,7 +1,5 @@
 package raidone.robot.auto.actions;
 
-import javax.net.ssl.TrustManager;
-
 import raidone.robot.submodules.Chassis;
 import raidone.robot.utils.TimerBoolean;
 

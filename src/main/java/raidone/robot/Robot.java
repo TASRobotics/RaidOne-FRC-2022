@@ -2,6 +2,8 @@ package raidone.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import raidone.robot.auto.AutoRunner;
 import raidone.robot.submodules.Chassis;
 import raidone.robot.submodules.EZClimb;
@@ -97,4 +99,5 @@ public class Robot extends TimedRobot {
         teleop.onLoop();
         submoduleManager.onLoop(Timer.getFPGATimestamp());
     }
+
 }

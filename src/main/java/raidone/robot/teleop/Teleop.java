@@ -8,6 +8,7 @@ import raidone.robot.submodules.EZClimb;
 import raidone.robot.submodules.Intake;
 import raidone.robot.submodules.Chassis.GearShift;
 import raidone.robot.submodules.EZClimb.EZClimbState;
+import raidone.robot.submodules.Intake.IntakeState;
 
 public class Teleop {
 
@@ -42,13 +43,22 @@ public class Teleop {
     /**
      * Continuously loops in teleop.
      */
-    boolean shiftState = false, prevShiftState = false, driveState = false, prevDriveState = false;
+    boolean shiftState = false, prevShiftState = false, driveState = false, prevDriveState = false, switchFront = false, prevSwitchFront = false;
     // int drive = 0;
     boolean shift = false;
+    int val = 1;
     // String message = "";
     public void onLoop() {
-        chassis.curvatureDrive(master.getLeftY(), -master.getRightX(), Math.abs(master.getLeftY()) < Constants.DEADBAND);
+        double leftY = master.getLeftY() * val;
+        switchFront = master.getRightStickButton();
+        if(switchFront && !prevSwitchFront) {
+            val *= -1;
+        }
+        prevSwitchFront = switchFront;
+        chassis.curvatureDrive(leftY, -master.getRightX(), Math.abs(master.getLeftY()) < Constants.DEADBAND);
         // chassis.tankDrive(master.getLeftY(), master.getRightY());
+        
+
         shiftState = master.getLeftBumper() || partner.getAButton();
         if(shiftState && !prevShiftState) {
             shift = !shift;
@@ -86,7 +96,7 @@ public class Teleop {
         SmartDashboard.putNumber("y pose", chassis.getPeriodicIO().y);
         SmartDashboard.putNumber("rotation", chassis.getPeriodicIO().rotation.getDegrees());
 
-        if(master.getStartButton() || partner.getStartButton()) {
+        if(master.getStartButton()) {
             climb.setState(EZClimbState.UP);
         } else {
             climb.setState(EZClimbState.DOWN);
@@ -96,8 +106,9 @@ public class Teleop {
         if(master.getRightBumper()) {
             climb.setSpeed(master.getLeftTriggerAxis());
         } else {
-            intake.autoSet((master.getRightTriggerAxis() + partner.getRightTriggerAxis())
-                             - (master.getLeftTriggerAxis() + partner.getLeftTriggerAxis()));
+            intake.autoSet(master.getRightTriggerAxis() - master.getLeftTriggerAxis());
         }
+        intake.setState(partner.getLeftBumper() || partner.getRightBumper() ? IntakeState.DOWN : IntakeState.UP);
+        intake.setPercentSpeed(partner.getRightTriggerAxis() - partner.getLeftTriggerAxis());
     }
 }

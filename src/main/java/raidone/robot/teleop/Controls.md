@@ -1,13 +1,17 @@
 # Controls
 
-## P1
-keybind | action | shift action
+## Master Controller
+keybind | action | shift action (right bumper)
 -- | -- | --
 Both Joysticks | Driving | Driving
-Left Bumper | Shifts to high torque | n/a
-Right Bumper | Shifts to low torque | n/a
+Left Bumper | Toggles between gear shifts | n/a
+Left Trigger | Intake out | Turn climb
+Right Trigger | Intake in | n/a
+Start Button | Releases climb | n/a
 
-
-## P2
+## Partner Controller
 keybind | action | shift action
 -- | -- | --
+Left Bumper | Toggles between gear shifts | n/a
+Left Trigger | Intake out | n/a
+Right Trigger | Intake in | n/a

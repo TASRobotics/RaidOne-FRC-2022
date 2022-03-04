@@ -17,7 +17,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 // import io.github.oblarg.oblog.Logger;
@@ -338,11 +337,11 @@ public class Chassis extends Submodule {
      */
     public void curvatureDrive(double throttle, double turn, boolean quickTurn) {
         /** Set deadband to all inputs */
-        throttle = JoystickUtils.deadband(JoystickUtils.monomialScale(throttle, ChassisConstants.MONOMIAL_SCALE, 1));
-        turn = JoystickUtils.deadband(JoystickUtils.monomialScale(turn, ChassisConstants.MONOMIAL_SCALE, 1));
+        // throttle = JoystickUtils.deadband(JoystickUtils.monomialScale(throttle, ChassisConstants.MONOMIAL_SCALE, 1));
+        // turn = JoystickUtils.deadband(JoystickUtils.monomialScale(turn, ChassisConstants.MONOMIAL_SCALE, 1));
 
-        // throttle = JoystickUtils.deadband(throttle);
-        // turn = JoystickUtils.deadband(turn);
+        throttle = JoystickUtils.deadband(throttle);
+        turn = JoystickUtils.deadband(turn);
 
         // Compute velocity, right stick = curvature if no quickturn, else power
         double leftSpeed = throttle + (quickTurn ? turn : Math.abs(throttle) * turn);

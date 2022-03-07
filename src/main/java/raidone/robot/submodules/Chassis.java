@@ -168,6 +168,13 @@ public class Chassis extends Submodule {
         mRightLeader.configOpenloopRamp(ChassisConstants.RAMP_RATE, Constants.TIMEOUT_MS);
         mRightLeader.configClosedloopRamp(0);
 
+        mLeftLeader.configContinuousCurrentLimit(30, Constants.TIMEOUT_MS);
+        mLeftLeader.configPeakCurrentLimit(80, Constants.TIMEOUT_MS);
+        mLeftLeader.configPeakCurrentDuration(1000, Constants.TIMEOUT_MS);
+        mRightLeader.configContinuousCurrentLimit(30, Constants.TIMEOUT_MS);
+        mRightLeader.configPeakCurrentLimit(80, Constants.TIMEOUT_MS);
+        mRightLeader.configPeakCurrentDuration(1000, Constants.TIMEOUT_MS);
+
         /** Config Talon PID */
         // ! change !
         mLeftLeader.config_kP(ChassisConstants.PID_LOOP_IDX, 
@@ -194,8 +201,8 @@ public class Chassis extends Submodule {
         changeShifterState(GearShift.LOW_TORQUE);
 
         /** Camera */
-        UsbCamera cam1 =  CameraServer.startAutomaticCapture(0);
-        cam1.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
+        // UsbCamera cam1 =  CameraServer.startAutomaticCapture(0);
+        // cam1.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
 
 
         // Logger.configureLoggingAndConfig(this, false);
@@ -250,6 +257,12 @@ public class Chassis extends Submodule {
         SmartDashboard.putNumber("actual left vel", periodicIO.actualLeftVelocity);
         SmartDashboard.putNumber("actual right vel", periodicIO.actualRightVelocity);
         SmartDashboard.putNumber("heading", periodicIO.heading.getDegrees());
+
+        SmartDashboard.putNumber("left enc", mLeftLeader.getSelectedSensorPosition());
+        SmartDashboard.putNumber("Right enc", mRightLeader.getSelectedSensorPosition());
+
+        SmartDashboard.putNumber("left vel 1234", mLeftLeader.getSelectedSensorVelocity());
+        SmartDashboard.putNumber("Right vel 1234", mRightLeader.getSelectedSensorVelocity());
 
 
         if(controlState == ControlState.PATH_FOLLOWING) {

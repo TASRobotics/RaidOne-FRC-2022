@@ -49,7 +49,7 @@ public class Teleop {
     int val = 1;
     // String message = "";
     public void onLoop() {
-        double leftY = master.getLeftY() * val;
+        double leftY = master.getLeftY() * val * 0.9;
         switchFront = master.getRightStickButton();
         if(switchFront && !prevSwitchFront) {
             val *= -1;

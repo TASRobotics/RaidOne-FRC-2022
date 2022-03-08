@@ -14,8 +14,8 @@ import raidone.robot.auto.actions.LambdaAction;
 import raidone.robot.auto.actions.DrivePath;
 
 public class SmallBigBallSequence extends AutoSequence {
-    private static final Trajectory path1 = PathPlanner.loadPath("SmallBigBall_0", AutoConstants.kMaxSpeedMetersPerSecond, AutoConstants.kMaxAccelerationMetersPerSecondSquared);
-    private static final Trajectory path2 = PathPlanner.loadPath("SmallBigBall_1", AutoConstants.kMaxSpeedMetersPerSecond, AutoConstants.kMaxAccelerationMetersPerSecondSquared, true);
+    private static final Trajectory path1 = PathPlanner.loadPath("SmallBigBall_0", AutoConstants.MAX_VEL, AutoConstants.MAX_ACCEL);
+    private static final Trajectory path2 = PathPlanner.loadPath("SmallBigBall_1", AutoConstants.MAX_VEL, AutoConstants.MAX_ACCEL, true);
 
     private static final Intake intake = Intake.getInstance();
 

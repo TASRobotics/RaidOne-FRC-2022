@@ -14,8 +14,8 @@ import java.util.Arrays;
 import com.pathplanner.lib.PathPlanner;
 
 public class BigBallSequence extends AutoSequence {
-    private static final Trajectory path1 = PathPlanner.loadPath("BigBall_0", AutoConstants.kMaxSpeedMetersPerSecond, AutoConstants.kMaxAccelerationMetersPerSecondSquared);
-    private static final Trajectory path2 = PathPlanner.loadPath("BigBall_1", AutoConstants.kMaxSpeedMetersPerSecond, AutoConstants.kMaxAccelerationMetersPerSecondSquared, true);
+    private static final Trajectory path1 = PathPlanner.loadPath("BigBall_0", AutoConstants.MAX_VEL, AutoConstants.MAX_ACCEL);
+    private static final Trajectory path2 = PathPlanner.loadPath("BigBall_1", AutoConstants.MAX_VEL, AutoConstants.MAX_ACCEL, true);
 
 
     private static final Intake intake = Intake.getInstance();

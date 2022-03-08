@@ -24,55 +24,21 @@ public final class Constants {
 
         /** Velocity PID */
         public static final int PID_LOOP_IDX = 0;
-        /** ROBORIO */
-        // public static final double LEFT_kV = 0.222;
-        // public static final double LEFT_kP = 0.045;
-        // public static final double LEFT_kA = 3.78;
-        // public static final double RIGHT_kV = 0.222;
-        // public static final double RIGHT_kP = 0.045;
-        // public static final double RIGHT_kA = 3.78;
-        /** Motor Controller */
-        public static final double LEFT_kV = 0.7;
-        // public static final double LEFT_kP = 0.1;
-        // public static final double LEFT_kA = 6.55;
-        public static final double LEFT_kP = 0.0;
-        public static final double LEFT_kA = 0.0;
-        public static final double RIGHT_kV = 0.7;
-        // public static final double RIGHT_kP = 0.1;
-        // public static final double RIGHT_kA = 6.05;
-        public static final double RIGHT_kP = 0.0;
-        public static final double RIGHT_kA = 0.0;
-
-        /** Drive kinematics (for ramsete) */
-        public static final double TRACK_WIDTH = 0.69;
-        public static final DifferentialDriveKinematics DRIVE_KINEMATICS =
-            new DifferentialDriveKinematics(TRACK_WIDTH);
-        
-        /** base constants */
-
-        /** // TODO 
-         * 
-         * - check lift for proper follower/leader shenanigans 
-         * - add camera
-         * - find actual max velocity to get actual constants
-         * - Use the characterized values to test pathing, if it is somewhat 
-         *   accurate, add ramsete to see if it works better
-         * - leader/follower for climb???
-         */
-        // public static final double kS = 0.9586 * (4.1 / 12);
-        // public static final double kV = 2.7954 * (4.1 / 12);
-        // public static final double kA = 0.93738 * (4.1 / 12);
-        // public static final double kP = 4.443 * (4.1 / 12);
         public static final double kS = 0.0;
         public static final double kV = 2.6;
         public static final double kA = 14.0;
         public static final double kP = 0.3;
+        
+        /** Drive kinematics (for ramsete) */
+        public static final double TRACK_WIDTH = 0.69;
+        public static final DifferentialDriveKinematics DRIVE_KINEMATICS =
+            new DifferentialDriveKinematics(TRACK_WIDTH);
 
-        public static final int kEncoderCPR = 8129;
-        public static final double kWheelDiameterMeters = 0.1524;
+        public static final int ENCODER_CPR = 8129; // counts per rotation
+        public static final double WHEEL_DIAMETER = 0.1524; // meters
         public static final double kEncoderDistancePerPulse =
             // Assumes the encoders are directly mounted on the wheel shafts
-            (kWheelDiameterMeters * Math.PI) / (double) kEncoderCPR;
+            (WHEEL_DIAMETER * Math.PI) / (double) ENCODER_CPR;
 
         /** Teleop Constants */
         public static final int MONOMIAL_SCALE = 0;
@@ -97,21 +63,19 @@ public final class Constants {
 
     public static final class OIConstants {
         /** Controller constants */
-        public static final int kDriverControllerPort = 0;
+        public static final int DRIVE_CONTROLLER_PORT = 0;
     }
 
     public static final class AutoConstants {
         /** Motion profile constants */
-        public static final double kMaxSpeedMetersPerSecond = 2;
-        public static final double kMaxAccelerationMetersPerSecondSquared = 2;
+        public static final double MAX_VEL = 2; // meters per second
+        public static final double MAX_ACCEL = 2; // meters per second ^ 2
         
         /** Ramsete constants */
-        public static final double kRamseteB = 2;
-        // public static final double kRamseteB = 3;
-        public static final double kRamseteZeta = 0.7;
-        // public static final double kRamseteZeta = 1.0;
+        public static final double RAMSETE_B = 2;
+        public static final double RAMSETE_ZETA = 0.7;
     }
-
+    
     /** Universal constants */
     public static final double DEADBAND = 0.06;
     public static final int TIMEOUT_MS = 10;

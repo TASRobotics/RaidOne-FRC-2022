@@ -12,7 +12,7 @@ import raidone.robot.auto.actions.LambdaAction;
 import raidone.robot.auto.actions.DrivePath;
 
 public class SmallBallSequence extends AutoSequence {
-    private static final Trajectory path1 = PathPlanner.loadPath("SmallBall_0", AutoConstants.kMaxSpeedMetersPerSecond, AutoConstants.kMaxAccelerationMetersPerSecondSquared);
+    private static final Trajectory path1 = PathPlanner.loadPath("SmallBall_0", AutoConstants.MAX_VEL, AutoConstants.MAX_ACCEL);
 
 
     private static final Intake intake = Intake.getInstance();

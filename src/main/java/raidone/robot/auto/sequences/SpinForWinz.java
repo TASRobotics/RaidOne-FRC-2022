@@ -11,7 +11,7 @@ import raidone.robot.auto.actions.SimpleMove;
 import raidone.robot.auto.actions.DrivePath;
 
 public class SpinForWinz extends AutoSequence {
-    private static final Trajectory path1 = PathPlanner.loadPath("SpinForWinz_0", AutoConstants.kMaxSpeedMetersPerSecond, AutoConstants.kMaxAccelerationMetersPerSecondSquared);
+    private static final Trajectory path1 = PathPlanner.loadPath("SpinForWinz_0", AutoConstants.MAX_VEL, AutoConstants.MAX_ACCEL);
 
     public SpinForWinz() {}
 

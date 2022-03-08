@@ -10,7 +10,7 @@ import raidone.robot.auto.actions.DrivePath;
 import raidone.robot.auto.actions.SeriesAction;
 
 public class TestSequence extends AutoSequence {
-    private static final Trajectory path = PathPlanner.loadPath("TestCurve", AutoConstants.kMaxSpeedMetersPerSecond, AutoConstants.kMaxAccelerationMetersPerSecondSquared);
+    private static final Trajectory path = PathPlanner.loadPath("TestCurve", AutoConstants.MAX_VEL, AutoConstants.MAX_ACCEL);
 
     public TestSequence() {}
 
